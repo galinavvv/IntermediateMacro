@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Intermediate Macroeconomics — practice quizzes</title>
+<style>
+  :root{
+    --ink:#1A1A1C; --accent:#1F3A6E; --budget:#15607A; --ic:#B21F35;
+    --note:#8A6212; --muted:#6B6E76; --rule:#D8DCE3; --paper:#FDFCFA;
+    --panel:#FFFFFF;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--paper); color:var(--ink);
+    font-family:"Palatino Linotype",Palatino,"Book Antiqua","URW Palladio L",
+                Georgia,serif;
+    line-height:1.5; padding:1.5rem 1rem 4rem;
+  }
+  .wrap{max-width:46rem;margin:0 auto}
+  header{border-top:3px solid var(--accent);padding-top:.9rem;margin-bottom:1.6rem}
+  h1{font-size:1.5rem;margin:0 0 .2rem;color:var(--accent);letter-spacing:.01em}
+  .sub{color:var(--muted);font-style:italic;font-size:.95rem;margin:0}
+  .card{
+    background:var(--panel);border:1px solid var(--rule);border-left:4px solid var(--accent);
+    padding:1.2rem 1.3rem;margin-bottom:1.1rem;
+  }
+  .stem{font-size:1.06rem;margin:0 0 1rem}
+  .qmeta{color:var(--muted);font-size:.82rem;letter-spacing:.04em;
+         text-transform:uppercase;margin:0 0 .5rem}
+  ul.options{list-style:none;margin:0;padding:0}
+  ul.options li{margin:0 0 .5rem}
+  button.opt{
+    width:100%;text-align:left;font:inherit;font-size:1rem;
+    background:#fff;border:1px solid var(--rule);border-radius:2px;
+    padding:.62rem .8rem;cursor:pointer;color:var(--ink);
+    display:flex;gap:.6rem;align-items:baseline;
+  }
+  button.opt:hover:not(:disabled){border-color:var(--budget);background:#F4F9FB}
+  button.opt:disabled{cursor:default}
+  button.opt .tag{color:var(--muted);font-variant:small-caps;min-width:1.2rem}
+  button.opt.wrong{background:#FBF1F2;border-color:var(--ic);color:#8B4148;
+                   text-decoration:line-through;text-decoration-thickness:1px}
+  button.opt.right{background:#EFF6F8;border-color:var(--budget);color:var(--budget);
+                   font-weight:600}
+  .verdict{margin:1rem 0 0;padding:.7rem .85rem;font-size:.97rem;border-left:3px solid}
+  .verdict.ok{border-color:var(--budget);background:#EFF6F8}
+  .verdict.no{border-color:var(--ic);background:#FBF1F2}
+  .verdict b{display:block;margin-bottom:.15rem}
+  .btn{
+    font:inherit;font-size:1rem;padding:.62rem 1.15rem;border-radius:2px;
+    border:1px solid var(--accent);background:var(--accent);color:#fff;cursor:pointer;
+  }
+  .btn:hover{background:#162C55}
+  .btn.ghost{background:#fff;color:var(--accent)}
+  .btn.ghost:hover{background:#F2F5FA}
+  .btn.quiet{background:#fff;color:var(--muted);border-color:var(--rule)}
+  .btn.quiet:hover{background:#F6F6F4;color:var(--ink)}
+  .row{display:flex;gap:.6rem;flex-wrap:wrap;align-items:center;margin-top:1.1rem}
+  .spacer{flex:1}
+  .bar{height:4px;background:var(--rule);margin:.3rem 0 1.4rem;overflow:hidden}
+  .bar > div{height:100%;background:var(--budget);width:0;transition:width .25s}
+  table.stats{border-collapse:collapse;width:100%;margin:.4rem 0 .2rem}
+  table.stats td{padding:.42rem .2rem;border-bottom:1px solid var(--rule);font-size:1rem}
+  table.stats td.n{text-align:right;font-weight:700;color:var(--accent);width:3.5rem}
+  table.stats tr:last-child td{border-bottom:none}
+  .note{color:var(--muted);font-size:.9rem}
+  em.v{font-style:italic}
+  footer{margin-top:2.2rem;color:var(--muted);font-size:.82rem;
+         border-top:1px solid var(--rule);padding-top:.7rem}
+  footer a{color:var(--muted)} footer a:hover{color:var(--accent)}
+  @media (max-width:480px){ body{padding:1rem .7rem 3rem} h1{font-size:1.3rem} }
+
+  .card a{color:var(--accent);text-decoration:none;border-bottom:1px solid var(--rule)}
+  .card a:hover{border-bottom-color:var(--accent)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>Practice quizzes</h1>
+  <p class="sub">ECN313 · Intermediate Macroeconomics</p>
+</header>
+
+<!-- ADD A CARD HERE FOR EACH NEW QUIZ -->
+<div class="card">
+  <p class="stem"><a href="ConsumerProblem.html">Consumer problem</a></p>
+  <p class="note">Setup, preferences, the budget line, and the tangency
+     condition. Twenty questions.</p>
+</div>
+
+<p class="note">Each quiz asks its questions in the order the notes cover them.
+   Get one right first time and it is done; miss it and it comes back later in
+   the session.</p>
+
+<footer>Nothing is stored or sent anywhere.</footer>
+
+</div>
+</body>
+</html>

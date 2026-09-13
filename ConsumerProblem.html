@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ECN313 — Consumer problem practice</title>
+<style>
+  :root{
+    --ink:#1A1A1C; --accent:#1F3A6E; --budget:#15607A; --ic:#B21F35;
+    --note:#8A6212; --muted:#6B6E76; --rule:#D8DCE3; --paper:#FDFCFA;
+    --panel:#FFFFFF;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--paper); color:var(--ink);
+    font-family:"Palatino Linotype",Palatino,"Book Antiqua","URW Palladio L",
+                Georgia,serif;
+    line-height:1.5; padding:1.5rem 1rem 4rem;
+  }
+  .wrap{max-width:46rem;margin:0 auto}
+  header{border-top:3px solid var(--accent);padding-top:.9rem;margin-bottom:1.6rem}
+  h1{font-size:1.5rem;margin:0 0 .2rem;color:var(--accent);letter-spacing:.01em}
+  .sub{color:var(--muted);font-style:italic;font-size:.95rem;margin:0}
+  .card{
+    background:var(--panel);border:1px solid var(--rule);border-left:4px solid var(--accent);
+    padding:1.2rem 1.3rem;margin-bottom:1.1rem;
+  }
+  .stem{font-size:1.06rem;margin:0 0 1rem}
+  .qmeta{color:var(--muted);font-size:.82rem;letter-spacing:.04em;
+         text-transform:uppercase;margin:0 0 .5rem}
+  ul.options{list-style:none;margin:0;padding:0}
+  ul.options li{margin:0 0 .5rem}
+  button.opt{
+    width:100%;text-align:left;font:inherit;font-size:1rem;
+    background:#fff;border:1px solid var(--rule);border-radius:2px;
+    padding:.62rem .8rem;cursor:pointer;color:var(--ink);
+    display:flex;gap:.6rem;align-items:baseline;
+  }
+  button.opt:hover:not(:disabled){border-color:var(--budget);background:#F4F9FB}
+  button.opt:disabled{cursor:default}
+  button.opt .tag{color:var(--muted);font-variant:small-caps;min-width:1.2rem}
+  button.opt.wrong{background:#FBF1F2;border-color:var(--ic);color:#8B4148;
+                   text-decoration:line-through;text-decoration-thickness:1px}
+  button.opt.right{background:#EFF6F8;border-color:var(--budget);color:var(--budget);
+                   font-weight:600}
+  .verdict{margin:1rem 0 0;padding:.7rem .85rem;font-size:.97rem;border-left:3px solid}
+  .verdict.ok{border-color:var(--budget);background:#EFF6F8}
+  .verdict.no{border-color:var(--ic);background:#FBF1F2}
+  .verdict b{display:block;margin-bottom:.15rem}
+  .btn{
+    font:inherit;font-size:1rem;padding:.62rem 1.15rem;border-radius:2px;
+    border:1px solid var(--accent);background:var(--accent);color:#fff;cursor:pointer;
+  }
+  .btn:hover{background:#162C55}
+  .btn.ghost{background:#fff;color:var(--accent)}
+  .btn.ghost:hover{background:#F2F5FA}
+  .btn.quiet{background:#fff;color:var(--muted);border-color:var(--rule)}
+  .btn.quiet:hover{background:#F6F6F4;color:var(--ink)}
+  .row{display:flex;gap:.6rem;flex-wrap:wrap;align-items:center;margin-top:1.1rem}
+  .spacer{flex:1}
+  .bar{height:4px;background:var(--rule);margin:.3rem 0 1.4rem;overflow:hidden}
+  .bar > div{height:100%;background:var(--budget);width:0;transition:width .25s}
+  table.stats{border-collapse:collapse;width:100%;margin:.4rem 0 .2rem}
+  table.stats td{padding:.42rem .2rem;border-bottom:1px solid var(--rule);font-size:1rem}
+  table.stats td.n{text-align:right;font-weight:700;color:var(--accent);width:3.5rem}
+  table.stats tr:last-child td{border-bottom:none}
+  .note{color:var(--muted);font-size:.9rem}
+  em.v{font-style:italic}
+  footer{margin-top:2.2rem;color:var(--muted);font-size:.82rem;
+         border-top:1px solid var(--rule);padding-top:.7rem}
+  footer a{color:var(--muted)} footer a:hover{color:var(--accent)}
+  @media (max-width:480px){ body{padding:1rem .7rem 3rem} h1{font-size:1.3rem} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>Consumer problem — practice</h1>
+  <p class="sub">ECN313 · Intermediate Macroeconomics</p>
+</header>
+
+<div id="app"></div>
+
+<footer>
+  <a href="index.html">All practice quizzes</a> &middot;
+  Nothing is stored or sent anywhere — closing the page clears your progress.
+</footer>
+
+</div>
+
+<script>
+/* ------------------------------------------------------------------ questions
+   Order follows the chapter: setup, preferences, budget line, optimum.
+   correct = index into options.                                              */
+const QUESTIONS = [
+ {stem:"In the consumer's problem as set up in class, what does the consumer choose?",
+  options:["Consumption <em class='v'>c</em> and leisure &#8467;",
+           "Consumption <em class='v'>c</em> and hours worked <em class='v'>N</em>",
+           "The wage <em class='v'>w</em> and dividends &pi;",
+           "Consumption <em class='v'>c</em>, leisure &#8467; and the wage <em class='v'>w</em>"],
+  correct:0,
+  why:"She chooses <em class='v'>c</em> and &#8467;. Hours worked follow from leisure, since <em class='v'>N</em> = <em class='v'>h</em> &minus; &#8467;."},
+
+ {stem:"Which of the following is an <em>output</em> of the model rather than an input?",
+  options:["The real wage <em class='v'>w</em>",
+           "The time endowment <em class='v'>h</em>",
+           "Optimal hours worked <em class='v'>N</em>*",
+           "The lump-sum tax <em class='v'>T</em>"],
+  correct:2,
+  why:"Inputs are the parameters <em class='v'>w</em>, &pi;, <em class='v'>T</em>, <em class='v'>h</em> and the utility function. The starred quantities come out of the model."},
+
+ {stem:"Why does the consumer take the wage <em class='v'>w</em> as given?",
+  options:["Because the government fixes it",
+           "Because the labor market is competitive, so one consumer cannot affect it",
+           "Because it never changes over time",
+           "Because it always equals the MRS"],
+  correct:1,
+  why:"If she asked for more than the market wage the firm would simply hire someone else."},
+
+ {stem:"An indifference curve is the set of bundles that&hellip;",
+  options:["cost the same amount",
+           "deliver the same level of utility",
+           "are all affordable",
+           "all involve the same hours of work"],
+  correct:1,
+  why:"Same utility. Equal cost describes the budget line, which is a different object."},
+
+ {stem:"Which assumption makes indifference curves slope downward?",
+  options:["A1, more is better than less",
+           "A2, preference for diversity",
+           "A3, <em class='v'>c</em> and &#8467; are normal goods",
+           "None — it follows from the budget constraint"],
+  correct:0,
+  why:"Giving up leisure has to be compensated by more consumption, or utility would change. That is A1."},
+
+ {stem:"Which assumption makes indifference curves convex?",
+  options:["A1, more is better than less",
+           "A2, preference for diversity",
+           "A3, <em class='v'>c</em> and &#8467; are normal goods",
+           "The assumption that <em class='v'>w</em> &gt; 0"],
+  correct:1,
+  why:"A2 says a mix of two equally good bundles is at least as good, which is exactly convexity."},
+
+ {stem:"Following the notes, the property that two indifference curves cannot intersect follows from&hellip;",
+  options:["A2 alone", "A3 alone", "A1 and A2 together", "the shape of the budget line"],
+  correct:2,
+  why:"An intersection contradicts A1 (a bundle with more of both would be no better) and A2 (a mix of two equally good bundles would be worse)."},
+
+ {stem:"The slope of the budget line is&hellip;",
+  options:["&minus;<em class='v'>w</em>",
+           "&minus;(&pi; &minus; <em class='v'>T</em>)",
+           "&minus;<em class='v'>h</em>",
+           "&minus;MRS, whatever the tax system"],
+  correct:0,
+  why:"Giving up one hour of leisure buys <em class='v'>w</em> units of consumption. &pi; &minus; <em class='v'>T</em> sets the position, not the slope."},
+
+ {stem:"The kink of the budget line sits at&hellip;",
+  options:["(0, <em class='v'>wh</em> + &pi; &minus; <em class='v'>T</em>)",
+           "(<em class='v'>h</em>, &pi; &minus; <em class='v'>T</em>)",
+           "(<em class='v'>h</em>, 0)",
+           "(&#8467;*, <em class='v'>c</em>*)"],
+  correct:1,
+  why:"Leisure cannot exceed the time endowment, so at &#8467; = <em class='v'>h</em> she consumes only her non-labor income."},
+
+ {stem:"The vertical intercept of the budget line equals&hellip;",
+  options:["&pi; &minus; <em class='v'>T</em>",
+           "<em class='v'>wh</em>",
+           "<em class='v'>wh</em> + &pi; &minus; <em class='v'>T</em>",
+           "<em class='v'>w</em>(<em class='v'>h</em> &minus; &#8467;*)"],
+  correct:2,
+  why:"That is what she can consume if she takes no leisure at all: full earnings plus non-labor income."},
+
+ {stem:"A rise in the lump-sum tax <em class='v'>T</em>&hellip;",
+  options:["pivots the budget line about its kink",
+           "shifts the budget line inward, parallel to the old one",
+           "moves the kink to the right",
+           "makes the budget line flatter"],
+  correct:1,
+  why:"<em class='v'>T</em> does not appear in the slope, so only the kink height moves — straight down."},
+
+ {stem:"A rise in the wage <em class='v'>w</em>&hellip;",
+  options:["shifts the budget line outward, parallel to the old one",
+           "pivots the budget line about its kink",
+           "moves the kink upward",
+           "leaves the budget set unchanged"],
+  correct:1,
+  why:"The kink (<em class='v'>h</em>, &pi; &minus; <em class='v'>T</em>) has no <em class='v'>w</em> in it, so the line rotates about that point."},
+
+ {stem:"A rise in the time endowment <em class='v'>h</em>&hellip;",
+  options:["moves the kink to the right and leaves the slope unchanged",
+           "makes the budget line steeper",
+           "moves the kink up and leaves the slope unchanged",
+           "has no effect on the budget set"],
+  correct:0,
+  why:"More hours available means the kink slides sideways; the price of leisure is untouched."},
+
+ {stem:"If &pi; = <em class='v'>T</em>, then the budget line&hellip;",
+  options:["is horizontal",
+           "has no kink, because the consumer cannot work",
+           "reaches <em class='v'>c</em> = 0 exactly at &#8467; = <em class='v'>h</em>",
+           "lies entirely above the old one"],
+  correct:2,
+  why:"With no net non-labor income, a consumer who takes all her time as leisure has nothing to consume."},
+
+ {stem:"Compared with a lump-sum tax, a flat tax on labor earnings at rate <em class='v'>t</em>&hellip;",
+  options:["moves the kink but leaves the slope unchanged",
+           "changes the slope but leaves the kink where it is",
+           "changes neither",
+           "changes both in the same proportion"],
+  correct:1,
+  why:"The constraint becomes <em class='v'>c</em> &le; (1&minus;<em class='v'>t</em>)<em class='v'>w</em>(<em class='v'>h</em>&minus;&#8467;) + &pi;, so the net wage falls and the line flattens."},
+
+ {stem:"If the government pays a proportionate consumption subsidy at rate <em class='v'>s</em>, the slope of the budget line becomes&hellip;",
+  options:["&minus;<em class='v'>w</em>(1 &minus; <em class='v'>s</em>)",
+           "&minus;<em class='v'>w</em>&#8725;(1 &minus; <em class='v'>s</em>)",
+           "&minus;<em class='v'>w</em>, unchanged",
+           "&minus;(1 &minus; <em class='v'>s</em>)&#8725;<em class='v'>w</em>"],
+  correct:1,
+  why:"She really pays (1&minus;<em class='v'>s</em>)<em class='v'>c</em>, so each hour of work buys <em class='v'>w</em>&#8725;(1&minus;<em class='v'>s</em>) units. The line gets <em>steeper</em>, not flatter."},
+
+ {stem:"Under the lump-sum tax, the condition that holds at the consumer's optimum is&hellip;",
+  options:["MRS = <em class='v'>w</em>",
+           "MRS = <em class='v'>wh</em> + &pi; &minus; <em class='v'>T</em>",
+           "<em class='v'>c</em> = &#8467;",
+           "<em class='v'>N</em> = <em class='v'>h</em>&#8725;2"],
+  correct:0,
+  why:"Slope of the indifference curve equals slope of the budget line. Change the tax system and the right-hand side changes with it."},
+
+ {stem:"A bundle lying <em>strictly inside</em> the budget set cannot be optimal because&hellip;",
+  options:["it is not affordable",
+           "more of both goods is affordable, and by A1 that is better",
+           "it lies on a higher indifference curve than the optimum",
+           "indifference curves are convex"],
+  correct:1,
+  why:"She can move up and to the right and still afford the bundle, so the optimum must lie on the line."},
+
+ {stem:"A bundle lying <em>above</em> the budget line cannot be chosen because&hellip;",
+  options:["it gives lower utility than the optimum",
+           "it is not affordable",
+           "it violates A2",
+           "the indifference curve through it slopes upward"],
+  correct:1,
+  why:"It may well be preferred to everything she can buy — but it is not in the choice set."},
+
+ {stem:"Assumption A3 (consumption and leisure are normal goods) is used&hellip;",
+  options:["to show that indifference curves are convex",
+           "to derive the budget constraint",
+           "when working out how the optimal choice responds to a change in income",
+           "to prove that MRS = <em class='v'>w</em> at the optimum"],
+  correct:2,
+  why:"A1 and A2 describe preferences; A3 is about how the <em>choice</em> reacts, so it only does work in comparative statics."}
+];
+
+/* ---------------------------------------------------------------- state */
+const LETTERS = ["a","b","c","d","e","f"];
+const app = document.getElementById("app");
+
+let learned, everWrong, queue, order, seen, firstTry, relearned, wrongHere, answered;
+
+function resetAll(){
+  learned  = new Array(QUESTIONS.length).fill(false);
+  everWrong= new Array(QUESTIONS.length).fill(false);
+}
+
+function startSession(pool){
+  queue = pool.slice();
+  seen = new Set(); firstTry = new Set(); relearned = new Set();
+  nextQuestion();
+}
+
+function nextQuestion(){
+  if(queue.length === 0){ renderEnd(true); return; }
+  wrongHere = 0; answered = false;
+  const qid = queue[0];
+  order = shuffled(QUESTIONS[qid].options.map((_,i)=>i));
+  renderQuestion(qid);
+}
+
+function shuffled(a){
+  const r = a.slice();
+  for(let i=r.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [r[i],r[j]]=[r[j],r[i]]; }
+  return r;
+}
+
+/* --------------------------------------------------------------- screens */
+function renderHome(){
+  const done = learned.filter(Boolean).length;
+  const fresh = done === 0;
+  app.innerHTML = `
+    <div class="card">
+      <p class="stem">${fresh
+        ? `Twenty questions on the consumer's problem, in the order the notes
+           cover it. Get one right first time and it is done. Get it wrong and
+           you keep choosing until you find the answer &mdash; then that question
+           comes back later in the session.`
+        : `You have <b>${done}</b> of ${QUESTIONS.length} questions learned so far.`}</p>
+      <p class="note">No score is recorded anywhere. You can stop whenever you like
+         and you will get a summary.</p>
+      <div class="row">
+        <button class="btn" id="go">${fresh ? "Start practice session" : "Continue practising"}</button>
+        ${fresh ? "" : `<button class="btn quiet" id="reset">Start over</button>`}
+      </div>
+    </div>`;
+  document.getElementById("go").onclick = ()=>{
+    const pool = QUESTIONS.map((_,i)=>i).filter(i=>!learned[i]);
+    startSession(pool.length ? pool : QUESTIONS.map((_,i)=>i));
+  };
+  const rs = document.getElementById("reset");
+  if(rs) rs.onclick = ()=>{ resetAll(); renderHome(); };
+}
+
+function renderQuestion(qid){
+  const q = QUESTIONS[qid];
+  const total = QUESTIONS.length;
+  const doneCount = learned.filter(Boolean).length;
+  app.innerHTML = `
+    <div class="bar"><div style="width:${(doneCount/total*100).toFixed(1)}%"></div></div>
+    <div class="card">
+      <p class="qmeta">Question ${qid+1} of ${total} &middot; ${queue.length} left this round</p>
+      <p class="stem">${q.stem}</p>
+      <ul class="options" id="opts">
+        ${order.map((oi,pos)=>`
+          <li><button class="opt" data-oi="${oi}">
+            <span class="tag">(${LETTERS[pos]})</span><span>${q.options[oi]}</span>
+          </button></li>`).join("")}
+      </ul>
+      <div id="verdict"></div>
+      <div class="row">
+        <div id="advance"></div>
+        <div class="spacer"></div>
+        <button class="btn quiet" id="end">End session</button>
+      </div>
+    </div>`;
+  document.querySelectorAll("#opts .opt").forEach(b=>{
+    b.onclick = ()=>choose(qid, parseInt(b.dataset.oi,10), b);
+  });
+  document.getElementById("end").onclick = ()=>renderEnd(false);
+}
+
+function choose(qid, oi, btn){
+  if(answered) return;
+  const q = QUESTIONS[qid];
+  seen.add(qid);
+  const verdict = document.getElementById("verdict");
+
+  if(oi !== q.correct){
+    everWrong[qid] = true; wrongHere++;
+    btn.classList.add("wrong"); btn.disabled = true;
+    const left = document.querySelectorAll("#opts .opt:not(:disabled)").length;
+    verdict.innerHTML = `<div class="verdict no"><b>Not quite.</b>
+      ${left > 1 ? "Try again — pick from what is left."
+                 : "One option left; it has to be that one."}</div>`;
+    return;
+  }
+
+  answered = true;
+  btn.classList.add("right");
+  document.querySelectorAll("#opts .opt").forEach(b=>b.disabled = true);
+
+  let head, tail;
+  if(wrongHere === 0){
+    queue.shift();
+    learned[qid] = true;
+    if(everWrong[qid]){ relearned.add(qid); head = "Right — and that one is learned."; }
+    else             { firstTry.add(qid);  head = "Correct, first time."; }
+    tail = "It will not come up again.";
+  }else{
+    queue.shift(); queue.push(qid);
+    head = "That's the one.";
+    tail = "This question will come back once the others have been through.";
+  }
+  verdict.innerHTML = `<div class="verdict ok"><b>${head}</b>${q.why}
+    <span class="note"><br>${tail}</span></div>`;
+  const adv = document.getElementById("advance");
+  adv.innerHTML = `<button class="btn" id="next">${queue.length ? "Next question" : "Finish"}</button>`;
+  document.getElementById("next").onclick = nextQuestion;
+}
+
+function renderEnd(cleared){
+  const attempted = seen.size;
+  const clean = firstTry.size;
+  const fixed = relearned.size;
+  const remaining = QUESTIONS.map((_,i)=>i).filter(i=>!learned[i]);
+  const totalLearned = learned.filter(Boolean).length;
+  app.innerHTML = `
+    <div class="card">
+      <p class="qmeta">${cleared ? "Round complete" : "Session ended"}</p>
+      <p class="stem">${cleared
+        ? "Everything in this round is learned."
+        : "Here is how the session went."}</p>
+      <table class="stats">
+        <tr><td>Questions attempted</td><td class="n">${attempted}</td></tr>
+        <tr><td>Answered correctly at the first attempt</td><td class="n">${clean}</td></tr>
+        <tr><td>Learned after getting it wrong first</td><td class="n">${fixed}</td></tr>
+        <tr><td>Learned in total, out of ${QUESTIONS.length}</td><td class="n">${totalLearned}</td></tr>
+      </table>
+      <div class="row">
+        ${remaining.length
+          ? `<button class="btn" id="again">Practise the remaining ${remaining.length}</button>`
+          : `<button class="btn" id="restart">Start again from the top</button>`}
+        <button class="btn ghost" id="home">Back to start</button>
+      </div>
+      ${remaining.length
+        ? `<p class="note" style="margin-top:.9rem">The next round covers the questions
+           you have not learned yet — the ones you missed and the ones you have not seen.</p>`
+        : ""}
+    </div>`;
+  const a = document.getElementById("again");
+  if(a) a.onclick = ()=>startSession(remaining);
+  const r = document.getElementById("restart");
+  if(r) r.onclick = ()=>{ resetAll(); startSession(QUESTIONS.map((_,i)=>i)); };
+  document.getElementById("home").onclick = renderHome;
+}
+
+resetAll();
+renderHome();
+</script>
+</body>
+</html>
