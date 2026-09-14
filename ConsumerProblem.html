@@ -85,7 +85,8 @@
 
 <footer>
   <a href="index.html">All practice quizzes</a> &middot;
-  Nothing is stored or sent anywhere — closing the page clears your progress.
+  Your progress is saved in this browser, on this device only. Nothing is sent
+  anywhere.
 </footer>
 
 </div>
@@ -144,9 +145,11 @@ const QUESTIONS = [
   why:"A2 says a mix of two equally good bundles is at least as good, which is exactly convexity."},
 
  {stem:"Following the notes, the property that two indifference curves cannot intersect follows from&hellip;",
-  options:["A2 alone", "A3 alone", "A1 and A2 together", "the shape of the budget line"],
+  options:["A2 alone", "A3 alone",
+           "either A1 or A2 — each one is contradicted on its own",
+           "the shape of the budget line"],
   correct:2,
-  why:"An intersection contradicts A1 (a bundle with more of both would be no better) and A2 (a mix of two equally good bundles would be worse)."},
+  why:"An intersection contradicts A1 by itself (a bundle with more of both would have to be no better) and contradicts A2 by itself (a mix of two equally good bundles would be worse). Either one alone is enough to rule it out."},
 
  {stem:"The slope of the budget line is&hellip;",
   options:["&minus;<em class='v'>w</em>",
@@ -204,11 +207,11 @@ const QUESTIONS = [
   correct:2,
   why:"With no net non-labor income, a consumer who takes all her time as leisure has nothing to consume."},
 
- {stem:"Compared with a lump-sum tax, a flat tax on labor earnings at rate <em class='v'>t</em>&hellip;",
+ {stem:"Compared with a change in the lump-sum tax, a change in the flat tax <em class='v'>t</em> on labor earnings&hellip;",
   options:["moves the kink but leaves the slope unchanged",
            "changes the slope but leaves the kink where it is",
            "changes neither",
-           "changes both in the same proportion"],
+           "changes both the kink and the slope, in the same proportion"],
   correct:1,
   why:"The constraint becomes <em class='v'>c</em> &le; (1&minus;<em class='v'>t</em>)<em class='v'>w</em>(<em class='v'>h</em>&minus;&#8467;) + &pi;, so the net wage falls and the line flattens."},
 
@@ -259,9 +262,48 @@ const app = document.getElementById("app");
 
 let learned, everWrong, queue, order, seen, firstTry, relearned, wrongHere, answered;
 
+/* Progress is kept in this browser only, under one key. A question counts as
+   mastered once it has been answered correctly at the first attempt of a
+   showing; missing it puts it back to "shaky" until that happens.            */
+const STORE_KEY = "ecn313-consumer-problem-v1";
+let mastered;                        // array of true/false, persisted
+let touched;                         // array of true/false, has been seen ever
+
+function loadStore(){
+  try{
+    const raw = localStorage.getItem(STORE_KEY);
+    if(raw){
+      const o = JSON.parse(raw);
+      if(Array.isArray(o.mastered) && o.mastered.length === QUESTIONS.length
+         && Array.isArray(o.touched) && o.touched.length === QUESTIONS.length){
+        mastered = o.mastered.slice(); touched = o.touched.slice(); return true;
+      }
+    }
+  }catch(e){}
+  return false;
+}
+function saveStore(){
+  try{ localStorage.setItem(STORE_KEY,
+        JSON.stringify({mastered, touched, saved:Date.now()})); }catch(e){}
+}
+function clearStore(){
+  try{ localStorage.removeItem(STORE_KEY); }catch(e){}
+  mastered = new Array(QUESTIONS.length).fill(false);
+  touched  = new Array(QUESTIONS.length).fill(false);
+}
+function hasHistory(){ return touched.some(Boolean); }
+function notMastered(){ return QUESTIONS.map((_,i)=>i).filter(i=>!mastered[i]); }
+
 function resetAll(){
   learned  = new Array(QUESTIONS.length).fill(false);
   everWrong= new Array(QUESTIONS.length).fill(false);
+}
+
+function initStore(){
+  if(!loadStore()){
+    mastered = new Array(QUESTIONS.length).fill(false);
+    touched  = new Array(QUESTIONS.length).fill(false);
+  }
 }
 
 function startSession(pool){
@@ -286,29 +328,40 @@ function shuffled(a){
 
 /* --------------------------------------------------------------- screens */
 function renderHome(){
-  const done = learned.filter(Boolean).length;
-  const fresh = done === 0;
+  const done = mastered.filter(Boolean).length;
+  const left = notMastered();
+  const intro = `Twenty questions on the consumer's problem, in the order the
+     notes cover them. Get one right first time and it is done. Get it wrong and
+     you keep choosing until you find the answer &mdash; then that question comes
+     back later in the session.`;
+
   app.innerHTML = `
     <div class="card">
-      <p class="stem">${fresh
-        ? `Twenty questions on the consumer's problem, in the order the notes
-           cover it. Get one right first time and it is done. Get it wrong and
-           you keep choosing until you find the answer &mdash; then that question
-           comes back later in the session.`
-        : `You have <b>${done}</b> of ${QUESTIONS.length} questions learned so far.`}</p>
-      <p class="note">No score is recorded anywhere. You can stop whenever you like
-         and you will get a summary.</p>
+      ${hasHistory()
+        ? `<p class="stem">Welcome back. You have answered <b>${done}</b> of
+             ${QUESTIONS.length} questions correctly at the first attempt so far.</p>
+           <p class="note">Your progress is saved in this browser, on this device.</p>`
+        : `<p class="stem">${intro}</p>
+           <p class="note">Your progress will be saved in this browser so you can
+              pick up where you left off.</p>`}
       <div class="row">
-        <button class="btn" id="go">${fresh ? "Start practice session" : "Continue practising"}</button>
-        ${fresh ? "" : `<button class="btn quiet" id="reset">Start over</button>`}
+        ${hasHistory() && left.length
+          ? `<button class="btn" id="go-left">Practise the ${left.length} not yet learned</button>
+             <button class="btn ghost" id="go-all">Practise all ${QUESTIONS.length}</button>`
+          : `<button class="btn" id="go-all">${hasHistory()
+              ? "Practise all " + QUESTIONS.length + " again" : "Start practice session"}</button>`}
       </div>
+      ${hasHistory()
+        ? `<div class="row"><button class="btn quiet" id="forget">Clear saved progress</button></div>`
+        : ``}
     </div>`;
-  document.getElementById("go").onclick = ()=>{
-    const pool = QUESTIONS.map((_,i)=>i).filter(i=>!learned[i]);
-    startSession(pool.length ? pool : QUESTIONS.map((_,i)=>i));
-  };
-  const rs = document.getElementById("reset");
-  if(rs) rs.onclick = ()=>{ resetAll(); renderHome(); };
+
+  const bAll = document.getElementById("go-all");
+  if(bAll) bAll.onclick = ()=>{ resetAll(); startSession(QUESTIONS.map((_,i)=>i)); };
+  const bLeft = document.getElementById("go-left");
+  if(bLeft) bLeft.onclick = ()=>{ resetAll(); startSession(left); };
+  const bF = document.getElementById("forget");
+  if(bF) bF.onclick = ()=>{ clearStore(); resetAll(); renderHome(); };
 }
 
 function renderQuestion(qid){
@@ -342,11 +395,14 @@ function renderQuestion(qid){
 function choose(qid, oi, btn){
   if(answered) return;
   const q = QUESTIONS[qid];
+  const firstShowing = !seen.has(qid);
   seen.add(qid);
+  touched[qid] = true;
   const verdict = document.getElementById("verdict");
 
   if(oi !== q.correct){
     everWrong[qid] = true; wrongHere++;
+    mastered[qid] = false; saveStore();
     btn.classList.add("wrong"); btn.disabled = true;
     const left = document.querySelectorAll("#opts .opt:not(:disabled)").length;
     verdict.innerHTML = `<div class="verdict no"><b>Not quite.</b>
@@ -365,6 +421,8 @@ function choose(qid, oi, btn){
     learned[qid] = true;
     if(everWrong[qid]){ relearned.add(qid); head = "Right — and that one is learned."; }
     else             { firstTry.add(qid);  head = "Correct, first time."; }
+    if(firstShowing && !everWrong[qid]){ mastered[qid] = true; }
+    saveStore();
     tail = "It will not come up again.";
   }else{
     queue.shift(); queue.push(qid);
@@ -382,38 +440,44 @@ function renderEnd(cleared){
   const attempted = seen.size;
   const clean = firstTry.size;
   const fixed = relearned.size;
-  const remaining = QUESTIONS.map((_,i)=>i).filter(i=>!learned[i]);
-  const totalLearned = learned.filter(Boolean).length;
+  const left = notMastered();
+  const done = mastered.filter(Boolean).length;
   app.innerHTML = `
     <div class="card">
       <p class="qmeta">${cleared ? "Round complete" : "Session ended"}</p>
       <p class="stem">${cleared
-        ? "Everything in this round is learned."
+        ? "Everything in this round has been answered."
         : "Here is how the session went."}</p>
       <table class="stats">
         <tr><td>Questions attempted</td><td class="n">${attempted}</td></tr>
         <tr><td>Answered correctly at the first attempt</td><td class="n">${clean}</td></tr>
         <tr><td>Learned after getting it wrong first</td><td class="n">${fixed}</td></tr>
-        <tr><td>Learned in total, out of ${QUESTIONS.length}</td><td class="n">${totalLearned}</td></tr>
+        <tr><td>Saved on this device as learned, out of ${QUESTIONS.length}</td>
+            <td class="n">${done}</td></tr>
       </table>
       <div class="row">
-        ${remaining.length
-          ? `<button class="btn" id="again">Practise the remaining ${remaining.length}</button>`
-          : `<button class="btn" id="restart">Start again from the top</button>`}
-        <button class="btn ghost" id="home">Back to start</button>
+        ${left.length
+          ? `<button class="btn" id="again">Practise the ${left.length} not yet learned</button>
+             <button class="btn ghost" id="all">Practise all ${QUESTIONS.length}</button>`
+          : `<button class="btn" id="all">Practise all ${QUESTIONS.length} again</button>`}
+        <button class="btn quiet" id="home">Back to start</button>
       </div>
-      ${remaining.length
-        ? `<p class="note" style="margin-top:.9rem">The next round covers the questions
-           you have not learned yet — the ones you missed and the ones you have not seen.</p>`
-        : ""}
+      <p class="note" style="margin-top:.9rem">
+        ${left.length
+          ? `A question counts as learned once you get it right at the first
+             attempt. The ${left.length} remaining are the ones you missed and the
+             ones you have not seen yet.`
+          : `Every question has been answered correctly at the first attempt.`}
+        Your progress is saved in this browser, on this device.</p>
     </div>`;
   const a = document.getElementById("again");
-  if(a) a.onclick = ()=>startSession(remaining);
-  const r = document.getElementById("restart");
-  if(r) r.onclick = ()=>{ resetAll(); startSession(QUESTIONS.map((_,i)=>i)); };
+  if(a) a.onclick = ()=>{ resetAll(); startSession(left); };
+  document.getElementById("all").onclick =
+    ()=>{ resetAll(); startSession(QUESTIONS.map((_,i)=>i)); };
   document.getElementById("home").onclick = renderHome;
 }
 
+initStore();
 resetAll();
 renderHome();
 </script>
