@@ -98,7 +98,7 @@
 const QUESTIONS = [
  {stem:"In the consumer's problem as set up in class, what does the consumer choose?",
   options:["Consumption <em class='v'>c</em> and leisure &#8467;",
-           "Consumption <em class='v'>c</em> and hours worked <em class='v'>N</em>",
+           "Consumption <em class='v'>c</em> and dividends &pi;",
            "The wage <em class='v'>w</em> and dividends &pi;",
            "Consumption <em class='v'>c</em>, leisure &#8467; and the wage <em class='v'>w</em>"],
   correct:0,
@@ -266,8 +266,10 @@ let learned, everWrong, queue, order, seen, firstTry, relearned, wrongHere, answ
    mastered once it has been answered correctly at the first attempt of a
    showing; missing it puts it back to "shaky" until that happens.            */
 const STORE_KEY = "ecn313-consumer-problem-v1";
-let mastered;                        // array of true/false, persisted
-let touched;                         // array of true/false, has been seen ever
+let mastered;            // stored: answered right at the first attempt, persisted
+let touched;             // stored: has been seen at some point
+let sessionResult;       // this session only: qid -> true/false, not yet saved
+let savedThisVisit;      // has the student pressed Save during this visit
 
 function loadStore(){
   try{
@@ -282,9 +284,21 @@ function loadStore(){
   }catch(e){}
   return false;
 }
+/* What the stored record would become if the student chooses to save. */
+function mergedMastered(){
+  return mastered.map((m,i)=> i in sessionResult ? sessionResult[i] : m);
+}
+function mergedTouched(){
+  return touched.map((t,i)=> (i in sessionResult) ? true : t);
+}
 function saveStore(){
-  try{ localStorage.setItem(STORE_KEY,
-        JSON.stringify({mastered, touched, saved:Date.now()})); }catch(e){}
+  mastered = mergedMastered();
+  touched  = mergedTouched();
+  try{
+    localStorage.setItem(STORE_KEY,
+      JSON.stringify({mastered, touched, saved:Date.now()}));
+    return true;
+  }catch(e){ return false; }
 }
 function clearStore(){
   try{ localStorage.removeItem(STORE_KEY); }catch(e){}
@@ -309,6 +323,7 @@ function initStore(){
 function startSession(pool){
   queue = pool.slice();
   seen = new Set(); firstTry = new Set(); relearned = new Set();
+  sessionResult = {}; savedThisVisit = false;
   nextQuestion();
 }
 
@@ -330,38 +345,49 @@ function shuffled(a){
 function renderHome(){
   const done = mastered.filter(Boolean).length;
   const left = notMastered();
-  const intro = `Twenty questions on the consumer's problem, in the order the
-     notes cover them. Get one right first time and it is done. Get it wrong and
-     you keep choosing until you find the answer &mdash; then that question comes
-     back later in the session.`;
+
+  if(hasHistory()){
+    app.innerHTML = `
+      <div class="card">
+        <p class="qmeta">Saved progress found on this device</p>
+        <p class="stem">Last time you answered <b>${done}</b> of
+          ${QUESTIONS.length} questions correctly at the first attempt.
+          What would you like to practise?</p>
+        <div class="row">
+          ${left.length
+            ? `<button class="btn" id="go-left">Only the ${left.length} I have not learned</button>`
+            : ``}
+          <button class="btn ${left.length ? "ghost" : ""}" id="go-all">All ${QUESTIONS.length} questions</button>
+        </div>
+        <div class="row">
+          <button class="btn quiet" id="forget">Clear saved progress</button>
+        </div>
+        <p class="note" style="margin-top:.9rem">Progress is kept in this
+          browser, on this device only, and never leaves it.</p>
+      </div>`;
+    document.getElementById("go-all").onclick =
+      ()=>{ resetAll(); startSession(QUESTIONS.map((_,i)=>i)); };
+    const bl = document.getElementById("go-left");
+    if(bl) bl.onclick = ()=>{ resetAll(); startSession(left); };
+    document.getElementById("forget").onclick =
+      ()=>{ clearStore(); resetAll(); renderHome(); };
+    return;
+  }
 
   app.innerHTML = `
     <div class="card">
-      ${hasHistory()
-        ? `<p class="stem">Welcome back. You have answered <b>${done}</b> of
-             ${QUESTIONS.length} questions correctly at the first attempt so far.</p>
-           <p class="note">Your progress is saved in this browser, on this device.</p>`
-        : `<p class="stem">${intro}</p>
-           <p class="note">Your progress will be saved in this browser so you can
-              pick up where you left off.</p>`}
+      <p class="stem">Twenty questions on the consumer's problem, in the order
+        the notes cover them. Get one right first time and it is done. Get it
+        wrong and you keep choosing until you find the answer &mdash; then that
+        question comes back later in the session.</p>
+      <p class="note">At the end you can save your progress on this device, so
+        that next time you can practise just the ones you have not learned.</p>
       <div class="row">
-        ${hasHistory() && left.length
-          ? `<button class="btn" id="go-left">Practise the ${left.length} not yet learned</button>
-             <button class="btn ghost" id="go-all">Practise all ${QUESTIONS.length}</button>`
-          : `<button class="btn" id="go-all">${hasHistory()
-              ? "Practise all " + QUESTIONS.length + " again" : "Start practice session"}</button>`}
+        <button class="btn" id="go-all">Start practice session</button>
       </div>
-      ${hasHistory()
-        ? `<div class="row"><button class="btn quiet" id="forget">Clear saved progress</button></div>`
-        : ``}
     </div>`;
-
-  const bAll = document.getElementById("go-all");
-  if(bAll) bAll.onclick = ()=>{ resetAll(); startSession(QUESTIONS.map((_,i)=>i)); };
-  const bLeft = document.getElementById("go-left");
-  if(bLeft) bLeft.onclick = ()=>{ resetAll(); startSession(left); };
-  const bF = document.getElementById("forget");
-  if(bF) bF.onclick = ()=>{ clearStore(); resetAll(); renderHome(); };
+  document.getElementById("go-all").onclick =
+    ()=>{ resetAll(); startSession(QUESTIONS.map((_,i)=>i)); };
 }
 
 function renderQuestion(qid){
@@ -402,7 +428,7 @@ function choose(qid, oi, btn){
 
   if(oi !== q.correct){
     everWrong[qid] = true; wrongHere++;
-    mastered[qid] = false; saveStore();
+    sessionResult[qid] = false;
     btn.classList.add("wrong"); btn.disabled = true;
     const left = document.querySelectorAll("#opts .opt:not(:disabled)").length;
     verdict.innerHTML = `<div class="verdict no"><b>Not quite.</b>
@@ -421,8 +447,9 @@ function choose(qid, oi, btn){
     learned[qid] = true;
     if(everWrong[qid]){ relearned.add(qid); head = "Right — and that one is learned."; }
     else             { firstTry.add(qid);  head = "Correct, first time."; }
-    if(firstShowing && !everWrong[qid]){ mastered[qid] = true; }
-    saveStore();
+    if(firstShowing && !everWrong[qid] && !(qid in sessionResult)){
+      sessionResult[qid] = true;
+    }
     tail = "It will not come up again.";
   }else{
     queue.shift(); queue.push(qid);
@@ -440,8 +467,11 @@ function renderEnd(cleared){
   const attempted = seen.size;
   const clean = firstTry.size;
   const fixed = relearned.size;
-  const left = notMastered();
-  const done = mastered.filter(Boolean).length;
+  const wouldBe = mergedMastered();
+  const wouldLeft = wouldBe.map((m,i)=>i).filter(i=>!wouldBe[i]);
+  const doneAfter = wouldBe.filter(Boolean).length;
+  const anythingToSave = Object.keys(sessionResult).length > 0;
+
   app.innerHTML = `
     <div class="card">
       <p class="qmeta">${cleared ? "Round complete" : "Session ended"}</p>
@@ -452,26 +482,51 @@ function renderEnd(cleared){
         <tr><td>Questions attempted</td><td class="n">${attempted}</td></tr>
         <tr><td>Answered correctly at the first attempt</td><td class="n">${clean}</td></tr>
         <tr><td>Learned after getting it wrong first</td><td class="n">${fixed}</td></tr>
-        <tr><td>Saved on this device as learned, out of ${QUESTIONS.length}</td>
-            <td class="n">${done}</td></tr>
       </table>
-      <div class="row">
-        ${left.length
-          ? `<button class="btn" id="again">Practise the ${left.length} not yet learned</button>
-             <button class="btn ghost" id="all">Practise all ${QUESTIONS.length}</button>`
-          : `<button class="btn" id="all">Practise all ${QUESTIONS.length} again</button>`}
+
+      <div id="savebox">
+      ${anythingToSave ? `
+        <div class="verdict ok" style="margin-top:1rem">
+          <b>Save your progress?</b>
+          Saving records which questions you answered correctly at the first
+          attempt, so that next time you can practise only the rest. It is kept
+          <b>in this browser, on this device only</b> &mdash; nothing is sent
+          anywhere.
+        </div>
+        <div class="row">
+          <button class="btn" id="save">Save on this device</button>
+          <button class="btn quiet" id="nosave">Don't save</button>
+        </div>` : ``}
+      </div>
+
+      <div class="row" id="nextsteps">
+        <button class="btn ghost" id="again">Practise the ${wouldLeft.length} not yet learned</button>
+        <button class="btn ghost" id="all">Practise all ${QUESTIONS.length}</button>
         <button class="btn quiet" id="home">Back to start</button>
       </div>
-      <p class="note" style="margin-top:.9rem">
-        ${left.length
-          ? `A question counts as learned once you get it right at the first
-             attempt. The ${left.length} remaining are the ones you missed and the
-             ones you have not seen yet.`
-          : `Every question has been answered correctly at the first attempt.`}
-        Your progress is saved in this browser, on this device.</p>
     </div>`;
-  const a = document.getElementById("again");
-  if(a) a.onclick = ()=>{ resetAll(); startSession(left); };
+
+  const box = document.getElementById("savebox");
+  const bs = document.getElementById("save");
+  if(bs) bs.onclick = ()=>{
+    const ok = saveStore();
+    savedThisVisit = true;
+    box.innerHTML = ok
+      ? `<div class="verdict ok" style="margin-top:1rem"><b>Saved on this device.</b>
+         ${doneAfter} of ${QUESTIONS.length} questions are recorded as learned.
+         Next time you open this page you can pick up where you left off.</div>`
+      : `<div class="verdict no" style="margin-top:1rem"><b>Could not save.</b>
+         Your browser is blocking storage — private browsing usually does this.</div>`;
+  };
+  const bn = document.getElementById("nosave");
+  if(bn) bn.onclick = ()=>{
+    box.innerHTML = `<p class="note" style="margin-top:1rem">Nothing saved.
+      Closing the page will clear this session.</p>`;
+  };
+
+  const againBtn = document.getElementById("again");
+  if(wouldLeft.length === 0){ againBtn.remove(); }
+  else againBtn.onclick = ()=>{ resetAll(); startSession(wouldLeft); };
   document.getElementById("all").onclick =
     ()=>{ resetAll(); startSession(QUESTIONS.map((_,i)=>i)); };
   document.getElementById("home").onclick = renderHome;
