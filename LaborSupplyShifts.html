@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Intermediate Macroeconomics &mdash; Shifts of the labor supply curve practice</title>
+<style>
+  :root{
+    --ink:#1A1A1C; --accent:#1F3A6E; --budget:#15607A; --ic:#B21F35;
+    --note:#8A6212; --muted:#6B6E76; --rule:#D8DCE3; --paper:#FFFFFF;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:#F4F5F7;color:var(--ink);
+       font:17px/1.55 Palatino,"Palatino Linotype","Book Antiqua",Georgia,serif;}
+  .wrap{max-width:760px;margin:0 auto;padding:28px 20px 60px}
+  header{border-top:4px solid var(--accent);background:var(--paper);
+         padding:22px 26px 18px;border-bottom:1px solid var(--rule)}
+  h1{margin:0;font-size:1.5rem;color:var(--accent)}
+  .sub{margin:.3em 0 0;color:var(--muted);font-style:italic}
+  main{background:var(--paper);padding:26px;border:1px solid var(--rule);border-top:none}
+  .bar{display:flex;justify-content:space-between;align-items:center;
+       color:var(--muted);font-size:.85rem;margin-bottom:18px}
+  .stem{font-size:1.08rem;margin:0 0 18px}
+  em.v{font-style:italic}
+  ul{list-style:none;margin:0;padding:0}
+  li{margin:0 0 10px}
+  button.opt{width:100%;text-align:left;font:inherit;background:var(--paper);
+    border:1px solid var(--rule);border-left:3px solid var(--rule);
+    padding:11px 14px;cursor:pointer;color:inherit;border-radius:2px}
+  button.opt:hover:not(:disabled){border-left-color:var(--budget);background:#FBFCFD}
+  button.opt:disabled{cursor:default}
+  button.opt.wrong{text-decoration:line-through;color:var(--muted);
+    border-left-color:var(--ic);background:#FCF7F8}
+  button.opt.right{border-left-color:var(--accent);background:#F1F4F9;font-weight:bold}
+  .why{margin:18px 0 0;padding:13px 16px;background:#F1F4F9;
+       border-left:3px solid var(--accent);font-size:.96rem}
+  .why.miss{background:#FAF7EF;border-left-color:var(--note)}
+  .act{margin-top:20px;display:flex;gap:10px;flex-wrap:wrap}
+  button.go{font:inherit;background:var(--accent);color:#fff;border:0;
+    padding:10px 20px;cursor:pointer;border-radius:2px}
+  button.ghost{font:inherit;background:var(--paper);color:var(--accent);
+    border:1px solid var(--accent);padding:10px 20px;cursor:pointer;border-radius:2px}
+  .end h2{color:var(--accent);margin:.2em 0 .6em;font-size:1.25rem}
+  .score{margin:0 0 6px}
+  .score b{font-size:1.1rem}
+  footer{color:var(--muted);font-size:.8rem;text-align:center;margin-top:22px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1>Shifts of the labor supply curve &mdash; practice</h1>
+  <p class="sub">Intermediate Macroeconomics</p>
+</header>
+<main id="app"></main>
+<footer>Not graded. Nothing you do here is recorded or seen by anyone.</footer>
+</div>
+
+<script>
+const STORE_KEY = "ecn313-labor-supply-shifts-v1";
+
+const QUESTIONS = [
+  {stem: "Which change moves the consumer <em>along</em> the labor supply curve rather than shifting it?",
+   options: ["A rise in the lump-sum tax <em class='v'>T</em>",
+            "A rise in the real wage <em class='v'>w</em>",
+            "A rise in dividend income &pi;",
+            "A rise in the time endowment <em class='v'>h</em>"],
+   correct: 1,
+   why: "The wage is the variable on the labor-market axis, so changing it takes you along the curve. Every other parameter is held fixed while the curve is drawn, so changing one of those moves the whole curve."},
+
+  {stem: "While the labor supply curve is being drawn, which of these is held fixed?",
+   options: ["The real wage <em class='v'>w</em> and the utility function",
+            "Hours worked <em class='v'>N</em>* and the real wage <em class='v'>w</em>",
+            "&pi; &minus; <em class='v'>T</em>, <em class='v'>h</em> and the utility function",
+            "The consumer's level of utility and &pi; &minus; <em class='v'>T</em>"],
+   correct: 2,
+   why: "The curve traces optimal hours as the wage varies, so the wage is precisely what is <em>not</em> held fixed. Utility is not held fixed either: it changes as the wage does."},
+
+  {stem: "At a given wage the consumer now chooses more leisure than before. At that wage the labor supply curve has:",
+   options: ["shifted left",
+            "shifted right",
+            "become steeper",
+            "not moved"],
+   correct: 0,
+   why: "Hours worked are <em class='v'>N</em>* = <em class='v'>h</em> &minus; &#8467;*, so more leisure at the same wage means fewer hours supplied, and the point on the curve moves left."},
+
+  {stem: "Why is analysis of one consumer diagram enough to conclude that the <em>whole</em> curve shifts?",
+   options: ["Because the same argument can be repeated at every other wage",
+            "Because the shift is the same size at every wage",
+            "Because the curve is drawn for a single wage only",
+            "Because the wage does not enter the consumer's problem"],
+   correct: 0,
+   why: "Nothing in the argument depends on which wage was picked, so it goes through at every wage. That does not mean the shift is the same size at each wage &mdash; only that it goes the same way."},
+
+  {stem: "The government raises the lump-sum tax <em class='v'>T</em>. The budget line:",
+   options: ["pivots about the kink and gets flatter",
+            "shifts down, parallel to itself",
+            "pivots about the kink and gets steeper",
+            "shifts up, parallel to itself"],
+   correct: 1,
+   why: "The kink sits at (<em class='v'>h</em>, &pi; &minus; <em class='v'>T</em>), so a higher tax lowers it. The slope is &minus;<em class='v'>w</em>, which the tax does not touch, so the new line is parallel to the old one."},
+
+  {stem: "A rise in the lump-sum tax <em class='v'>T</em> creates:",
+   options: ["a pure income effect",
+            "a pure substitution effect",
+            "both effects, with substitution the larger",
+            "both effects, with income the larger"],
+   correct: 0,
+   why: "The slope of the budget line does not move, so the rate at which the consumer can trade leisure for consumption is unchanged. Only the level of utility falls."},
+
+  {stem: "Which assumption settles what a higher lump-sum tax does to hours worked?",
+   options: ["A1, that more is better than less",
+            "A2, preference for diversity",
+            "A3, that <em class='v'>c</em> and &#8467; are normal goods",
+            "A4, that the substitution effect dominates"],
+   correct: 2,
+   why: "The shift is parallel, so it is a pure income effect, and normality alone says which way both goods move. No statement about the strength of substitution is needed."},
+
+  {stem: "After a rise in the lump-sum tax <em class='v'>T</em>, the labor supply curve:",
+   options: ["shifts left, at every wage",
+            "shifts right, at every wage",
+            "shifts right at low wages only",
+            "does not move"],
+   correct: 1,
+   why: "Being poorer, the consumer takes less of both goods, so &#8467;* falls and <em class='v'>N</em>* = <em class='v'>h</em> &minus; &#8467;* rises &mdash; at every wage."},
+
+  {stem: "Intuitively, why does a higher lump-sum tax make the consumer work more?",
+   options: ["She is poorer, and an extra hour of work still pays the same",
+            "She is poorer, and an extra hour of work now pays more",
+            "She is richer, and an extra hour of work still pays the same",
+            "She is richer, and an extra hour of work now pays less"],
+   correct: 0,
+   why: "A lump-sum tax is a fixed amount, so it takes income away without changing the reward for working. She makes part of the loss back by working more."},
+
+  {stem: "A consumer working <em class='v'>N</em> hours now also pays <em class='v'>t</em><em class='v'>w</em><em class='v'>N</em> to the government. The budget constraint becomes:",
+   options: ["<em class='v'>c</em> &le; <em class='v'>w</em>(<em class='v'>h</em> &minus; &#8467;) + &pi; &minus; <em class='v'>T</em> &minus; <em class='v'>t</em>",
+            "(1 + <em class='v'>t</em>)<em class='v'>c</em> &le; <em class='v'>w</em>(<em class='v'>h</em> &minus; &#8467;) + &pi; &minus; <em class='v'>T</em>",
+            "<em class='v'>c</em> &le; <em class='v'>w</em>(<em class='v'>h</em> &minus; &#8467;) + (1 &minus; <em class='v'>t</em>)(&pi; &minus; <em class='v'>T</em>)",
+            "<em class='v'>c</em> &le; (1 &minus; <em class='v'>t</em>)<em class='v'>w</em>(<em class='v'>h</em> &minus; &#8467;) + &pi; &minus; <em class='v'>T</em>"],
+   correct: 3,
+   why: "The tax is charged on labor earnings only, so it multiplies the earnings term. Grouping the two earnings terms leaves the net wage (1 &minus; t)w."},
+
+  {stem: "Introducing a proportional tax on labor income makes the budget line:",
+   options: ["shift down, parallel to itself",
+            "pivot about the kink and get steeper",
+            "pivot about the kink and get flatter",
+            "shift up, parallel to itself"],
+   correct: 2,
+   why: "&pi; &minus; <em class='v'>T</em> is untouched, so the kink stays exactly where it was, while the slope falls from <em class='v'>w</em> to the net wage."},
+
+  {stem: "With a labor-income tax in place, the slope of the budget line is:",
+   options: ["the net wage, while the labor-market axis measures the gross wage",
+            "the gross wage, while the labor-market axis measures the net wage",
+            "the net wage, and the labor-market axis measures it too",
+            "the gross wage, and the labor-market axis measures it too"],
+   correct: 0,
+   why: "The slope is what the consumer actually keeps per hour. The market still pays the gross wage, and that is what the labor-market diagram plots, so the two can differ."},
+
+  {stem: "In the decomposition of the move caused by the labor-income tax, the intermediate bundle is the one that lies:",
+   options: ["on the original indifference curve, where its slope equals the new net wage",
+            "on the original budget line, where its slope equals the new net wage",
+            "on the new indifference curve, where its slope equals the old wage",
+            "on the new budget line, where its slope equals the old wage"],
+   correct: 0,
+   why: "It is the bundle the consumer would pick if the reward per hour changed but her utility did not, so it stays on the original curve and takes the new slope."},
+
+  {stem: "In the pure substitution step of the decomposition of the move caused by the labor-income tax, leisure:",
+   options: ["rises, because an hour of work now pays less",
+            "falls, because an hour of work now pays less",
+            "rises, because the consumer is poorer",
+            "falls, because the consumer is poorer"],
+   correct: 0,
+   why: "Utility is held fixed in this step, so nothing happens through income. Work is less rewarding, so she substitutes towards leisure."},
+
+  {stem: "In the pure income step of that decomposition, consumption and leisure:",
+   options: ["both rise, because the consumer is poorer and both goods are normal",
+            "both fall, because the consumer is poorer and both goods are normal",
+            "move in opposite directions, because only leisure is normal",
+            "both fall, because the reward for working has changed"],
+   correct: 1,
+   why: "This step takes her from the hypothetical bundle onto the budget line she can actually afford. She is poorer, and normality pulls both goods down."},
+
+  {stem: "Which assumption decides whether hours worked rise or fall after the introduction of a proportionate labor-income tax?",
+   options: ["A1, that more is better than less",
+            "A2, preference for diversity",
+            "A3, that <em class='v'>c</em> and &#8467; are normal goods",
+            "A4, that the substitution effect dominates"],
+   correct: 3,
+   why: "The two steps push leisure in opposite directions, so the answer needs a statement about which is stronger. A3 is used along the way, but it does not settle the sign."},
+
+  {stem: "Under A4 (that the substitution effect is greater than the income effect), introducing a proportional tax on labor income shifts the labor supply curve:",
+   options: ["to the left, at every wage",
+            "to the right, at every wage",
+            "to the left at low wages only",
+            "to the right at low wages only"],
+   correct: 0,
+   why: "Substitution outweighs income, so on balance leisure rises and hours fall, and the same argument runs at every wage."},
+
+  {stem: "Suppose that preferences do not satisfy A4 and income effect dominates substitution effect. The same labor-income tax would shift the curve:",
+   options: ["to the right, because hours worked rise",
+            "to the left, because hours worked rise",
+            "to the right, because hours worked fall",
+            "to the left, because hours worked fall"],
+   correct: 0,
+   why: "Both steps still point the same ways; only which one wins changes. If income wins, leisure falls on balance, so hours rise."},
+
+  {stem: "In the decomposition implemented in response to an introduction of a proportionate labor income tax in the model in which the opposite of A4 hold (substitution effect dominates income effect), what happens to consumption?",
+   options: ["It falls in both steps, so it falls whichever effect is larger",
+            "It rises in both steps, so it rises whichever effect is larger",
+            "It falls in the substitution step and rises in the income step",
+            "It rises in the substitution step and falls in the income step"],
+   correct: 0,
+   why: "Both steps push consumption down, so consumption is unambiguous even though hours worked are not."},
+
+  {stem: "A rise in the lump-sum tax and the introduction of a labor-income tax:",
+   options: ["shift the curve in opposite directions: right and left",
+            "shift the curve in opposite directions: left and right",
+            "both shift the curve to the right",
+            "both shift the curve to the left"],
+   correct: 0,
+   why: "A lump-sum tax makes people poorer without changing what an hour pays, so they work more; a labor-income tax makes work itself pay less, so they work less. Different types of tax can pull the economy opposite ways."}
+];
+
+/* ---------- saved progress -------------------------------------------- */
+function loadLearned(){
+  try{ const r = localStorage.getItem(STORE_KEY);
+       return r ? new Set(JSON.parse(r)) : new Set(); }
+  catch(e){ return new Set(); }
+}
+function saveLearned(set){
+  try{ localStorage.setItem(STORE_KEY, JSON.stringify([...set])); return true; }
+  catch(e){ return false; }
+}
+
+/* ---------- session state --------------------------------------------- */
+const app = document.getElementById("app");
+let queue = [], cur = null, shown = [], missed = false;
+let attempted = new Set(), firstTry = new Set(), afterMiss = new Set();
+
+function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1));
+  [a[i],a[j]]=[a[j],a[i]]; } return a; }
+
+function start(ids){
+  queue = ids.slice(); cur = null;
+  attempted = new Set(); firstTry = new Set(); afterMiss = new Set();
+  next();
+}
+function next(){
+  if(queue.length === 0){ return end(); }
+  cur = queue.shift(); missed = false;
+  shown = shuffle(QUESTIONS[cur].options.map((text,i)=>({text:text,i:i})));
+  render(false);
+}
+
+function render(explain){
+  const q = QUESTIONS[cur];
+  const done = firstTry.size;
+  let html = '<div class="bar"><span>' + done + ' of ' + QUESTIONS.length +
+             ' learned</span><span>' + (queue.length + 1) + ' left in this round</span></div>';
+  html += '<p class="stem">' + q.stem + '</p><ul>';
+  shown.forEach(function(o,pos){
+    html += '<li><button class="opt" data-pos="' + pos + '">' + o.text + '</button></li>';
+  });
+  html += '</ul>';
+  if(explain){
+    html += '<div class="why' + (missed ? ' miss' : '') + '"><b>' +
+            (missed ? 'Now you have it. ' : 'Correct. ') + '</b>' + q.why + '</div>' +
+            '<div class="act"><button class="go" id="nx">Next question</button>' +
+            '<button class="ghost" id="stop">End session</button></div>';
+  } else {
+    html += '<div class="act"><button class="ghost" id="stop">End session</button></div>';
+  }
+  app.innerHTML = html;
+  app.querySelectorAll("button.opt").forEach(function(b){
+    if(explain){
+      b.disabled = true;
+      if(shown[+b.dataset.pos].i === QUESTIONS[cur].correct) b.classList.add("right");
+    } else {
+      b.onclick = function(){ answer(+b.dataset.pos, b); };
+    }
+  });
+  const nx = document.getElementById("nx"); if(nx) nx.onclick = advance;
+  document.getElementById("stop").onclick = end;
+}
+
+function answer(pos, btn){
+  attempted.add(cur);
+  if(shown[pos].i === QUESTIONS[cur].correct){
+    if(missed) afterMiss.add(cur); else firstTry.add(cur);
+    render(true);
+  } else {
+    missed = true;
+    btn.classList.add("wrong");
+    btn.disabled = true;
+  }
+}
+
+/* A question found only after a miss goes to the BACK of the queue and has to
+   be answered cleanly later before it counts as learned. */
+function advance(){
+  if(afterMiss.has(cur)){ afterMiss.delete(cur); queue.push(cur); }
+  next();
+}
+
+/* ---------- end of session -------------------------------------------- */
+function end(){
+  const learned = firstTry.size, tried = attempted.size;
+  const afterAMiss = tried - learned;
+  let html = '<div class="end"><h2>Session summary</h2>' +
+    '<p class="score">Questions attempted: <b>' + tried + '</b></p>' +
+    '<p class="score">Right at the first attempt: <b>' + learned + '</b></p>' +
+    '<p class="score">Answered only after a miss: <b>' + afterAMiss + '</b></p>';
+  if(learned > 0){
+    html += '<p>Shall this device remember the ' + learned +
+            ' you got right first time, so next time you can practise only the rest?</p>' +
+            '<div class="act"><button class="go" id="save">Save progress</button>' +
+            '<button class="ghost" id="nosave">Do not save</button></div></div>';
+  } else {
+    html += '<div class="act"><button class="go" id="nosave">Start again</button></div></div>';
+  }
+  app.innerHTML = html;
+  const sv = document.getElementById("save");
+  if(sv) sv.onclick = function(){
+    const set = loadLearned();
+    firstTry.forEach(function(i){ set.add(i); });
+    const ok = saveLearned(set);
+    app.innerHTML = '<div class="end"><h2>' + (ok ? 'Saved' : 'Could not save') +
+      '</h2><p>' + (ok
+        ? 'Next time this page will offer to skip what you have learned.'
+        : 'This browser would not let the page store anything, so nothing was kept.') +
+      '</p><div class="act"><button class="go" id="again">Start again</button></div></div>';
+    document.getElementById("again").onclick = home;
+  };
+  const ns = document.getElementById("nosave"); if(ns) ns.onclick = home;
+}
+
+/* ---------- opening screen -------------------------------------------- */
+function home(){
+  const learned = loadLearned();
+  const all = QUESTIONS.map(function(q,i){ return i; });
+  const rest = all.filter(function(i){ return !learned.has(i); });
+  if(learned.size > 0 && rest.length > 0){
+    app.innerHTML = '<div class="end"><h2>Welcome back</h2>' +
+      '<p>This device has ' + learned.size + ' of ' + QUESTIONS.length +
+      ' questions marked as learned.</p>' +
+      '<div class="act"><button class="go" id="rest">Practise the ' + rest.length +
+      ' not yet learned</button>' +
+      '<button class="ghost" id="all">Practise all ' + QUESTIONS.length + '</button></div>' +
+      '<div class="act"><button class="ghost" id="clear">Forget my progress</button></div></div>';
+    document.getElementById("rest").onclick = function(){ start(rest); };
+    document.getElementById("all").onclick  = function(){ start(all); };
+    document.getElementById("clear").onclick = function(){
+      try{ localStorage.removeItem(STORE_KEY); }catch(e){}
+      home();
+    };
+  } else {
+    app.innerHTML = '<div class="end"><h2>Twenty short questions</h2>' +
+      '<p>They follow the order of the class notes. Get one right at the first attempt ' +
+      'and it is retired for the session; miss it and it comes back later. Not graded.</p>' +
+      '<div class="act"><button class="go" id="all">Start</button></div></div>';
+    document.getElementById("all").onclick = function(){ start(all); };
+  }
+}
+home();
+</script>
+</body>
+</html>
