@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Intermediate Macroeconomics — Lump-sum vs proportional taxes practice</title>
+<style>
+  :root{
+    --ink:#1A1A1C; --accent:#1F3A6E; --budget:#15607A; --ic:#B21F35;
+    --note:#8A6212; --muted:#6B6E76; --rule:#D8DCE3; --paper:#FDFCFA;
+    --panel:#FFFFFF;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--paper); color:var(--ink);
+    font-family:"Palatino Linotype",Palatino,"Book Antiqua","URW Palladio L",
+                Georgia,serif;
+    line-height:1.5; padding:1.5rem 1rem 4rem;
+  }
+  .wrap{max-width:46rem;margin:0 auto}
+  header{border-top:3px solid var(--accent);padding-top:.9rem;margin-bottom:1.6rem}
+  h1{font-size:1.5rem;margin:0 0 .2rem;color:var(--accent);letter-spacing:.01em}
+  .sub{color:var(--muted);font-style:italic;font-size:.95rem;margin:0}
+  .card{
+    background:var(--panel);border:1px solid var(--rule);border-left:4px solid var(--accent);
+    padding:1.2rem 1.3rem;margin-bottom:1.1rem;
+  }
+  .stem{font-size:1.06rem;margin:0 0 1rem}
+  .qmeta{color:var(--muted);font-size:.82rem;letter-spacing:.04em;
+         text-transform:uppercase;margin:0 0 .5rem}
+  ul.options{list-style:none;margin:0;padding:0}
+  ul.options li{margin:0 0 .5rem}
+  button.opt{
+    width:100%;text-align:left;font:inherit;font-size:1rem;
+    background:#fff;border:1px solid var(--rule);border-radius:2px;
+    padding:.62rem .8rem;cursor:pointer;color:var(--ink);
+    display:flex;gap:.6rem;align-items:baseline;
+  }
+  button.opt:hover:not(:disabled){border-color:var(--budget);background:#F4F9FB}
+  button.opt:disabled{cursor:default}
+  button.opt .tag{color:var(--muted);font-variant:small-caps;min-width:1.2rem}
+  button.opt.wrong{background:#FBF1F2;border-color:var(--ic);color:#8B4148;
+                   text-decoration:line-through;text-decoration-thickness:1px}
+  button.opt.right{background:#EFF6F8;border-color:var(--budget);color:var(--budget);
+                   font-weight:600}
+  .verdict{margin:1rem 0 0;padding:.7rem .85rem;font-size:.97rem;border-left:3px solid}
+  .verdict.ok{border-color:var(--budget);background:#EFF6F8}
+  .verdict.no{border-color:var(--ic);background:#FBF1F2}
+  .verdict b{display:block;margin-bottom:.15rem}
+  .btn{
+    font:inherit;font-size:1rem;padding:.62rem 1.15rem;border-radius:2px;
+    border:1px solid var(--accent);background:var(--accent);color:#fff;cursor:pointer;
+  }
+  .btn:hover{background:#162C55}
+  .btn.ghost{background:#fff;color:var(--accent)}
+  .btn.ghost:hover{background:#F2F5FA}
+  .btn.quiet{background:#fff;color:var(--muted);border-color:var(--rule)}
+  .btn.quiet:hover{background:#F6F6F4;color:var(--ink)}
+  .row{display:flex;gap:.6rem;flex-wrap:wrap;align-items:center;margin-top:1.1rem}
+  .spacer{flex:1}
+  .bar{height:4px;background:var(--rule);margin:.3rem 0 1.4rem;overflow:hidden}
+  .bar > div{height:100%;background:var(--budget);width:0;transition:width .25s}
+  table.stats{border-collapse:collapse;width:100%;margin:.4rem 0 .2rem}
+  table.stats td{padding:.42rem .2rem;border-bottom:1px solid var(--rule);font-size:1rem}
+  table.stats td.n{text-align:right;font-weight:700;color:var(--accent);width:3.5rem}
+  table.stats tr:last-child td{border-bottom:none}
+  .note{color:var(--muted);font-size:.9rem}
+  em.v{font-style:italic}
+  footer{margin-top:2.2rem;color:var(--muted);font-size:.82rem;
+         border-top:1px solid var(--rule);padding-top:.7rem}
+  footer a{color:var(--muted)} footer a:hover{color:var(--accent)}
+  @media (max-width:480px){ body{padding:1rem .7rem 3rem} h1{font-size:1.3rem} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>Lump-sum vs proportional taxes — practice</h1>
+  <p class="sub">Intermediate Macroeconomics</p>
+</header>
+
+<div id="app"></div>
+
+<footer>
+  <a href="index.html">All practice quizzes</a> &middot;
+  Your progress is saved in this browser, on this device only. Nothing is sent
+  anywhere.
+</footer>
+
+</div>
+
+<script>
+/* ------------------------------------------------------------------ questions
+   Order follows the chapter: setup, preferences, budget line, optimum.
+   correct = index into options.                                              */
+const QUESTIONS = [
+ {stem:"The government raises the lump-sum tax <em class='v'>T</em>. What happens to the labor supply curve?",
+  options:["It shifts right: the representative consumer works more at each wage",
+           "It is unchanged, since the wage has not moved",
+           "It gets flatter, but does not shift",
+           "It shifts left: the representative consumer works less at each wage"],
+  correct:0,
+  why:"The budget line drops at an unchanged wage, so she is poorer. Leisure is a normal good (A3), so she takes less of it and works more at every wage."},
+
+ {stem:"A proportional tax <em class='v'>t</em> on labor income is introduced. Under A4, what happens to the labor supply curve?",
+  options:["It shifts right: the representative consumer works more at each gross wage",
+           "It gets steeper, but does not shift",
+           "It shifts left: the representative consumer works less at each gross wage",
+           "It is unchanged, since the gross wage has not moved"],
+  correct:2,
+  why:"The tax lowers the net wage. With the substitution effect dominating (A4), she works less at every gross wage, so the whole curve moves left."},
+
+ {stem:"Why does a proportional labor-income tax shift the labor supply curve rather than move the consumer along it?",
+  options:["The tax changes dividend income &pi; rather than the wage",
+           "The tax makes the labor supply curve slope downward",
+           "The labor market plots gross wage on the vertical axis, and the tax changes the wage the consumer keeps",
+           "The tax changes the time endowment <em class='v'>h</em> she has to allocate"],
+  correct:2,
+  why:"A point on the curve pairs a gross wage with hours. The gross wage on the axis is untouched, but the net wage behind her choice is not, so hours change at every point of the axis."},
+
+ {stem:"A lump-sum tax rise and a new proportional tax raise the same extra revenue &Delta;. What does the model say about their effects on hours worked?",
+  options:["They push hours the same way, by the same amount",
+           "Neither changes hours, because revenue is the same",
+           "They push hours in opposite directions",
+           "They push hours the same way, by different amounts"],
+  correct:2,
+  why:"The lump-sum rise makes the consumer poorer at an unchanged wage, so she works more; the proportional tax cuts the net wage and, under A4, she works less. Same revenue, opposite effects."},
+
+ {stem:"Two tax instruments raise the same revenue. Which one counts as the better one here?",
+  options:["The one on which the consumer reaches a higher indifference curve",
+           "The one that raises its revenue with a lower tax rate",
+           "The one on which the consumer works more hours",
+           "The one that leaves the consumer with more consumption"],
+  correct:0,
+  why:"Revenue is equal by construction, so the government is indifferent and the consumer breaks the tie. Neither hours nor consumption on its own says how well off she is."},
+
+ {stem:"An extra lump-sum tax &Delta; is imposed. What happens to the budget line?",
+  options:["The kink stays put and the line gets flatter",
+           "The kink falls by &Delta; and the slope is unchanged",
+           "The kink falls by &Delta; and the line gets flatter",
+           "The kink moves left and the slope is unchanged"],
+  correct:1,
+  why:"The kink sits at &pi; &minus; <em class='v'>T</em> &minus; &Delta;, so it falls by &Delta;. The slope is still the wage, so the new line is parallel to the old one."},
+
+ {stem:"A proportional tax <em class='v'>t</em> on labor income is imposed. What happens to the budget line?",
+  options:["It pivots about the kink and gets steeper",
+           "It shifts down and also gets flatter",
+           "It pivots about the kink and gets flatter",
+           "It shifts down, parallel to the old line"],
+  correct:2,
+  why:"At &#8467; = <em class='v'>h</em> she earns nothing, so the kink cannot move; the slope becomes the net wage (1 &minus; <em class='v'>t</em>)<em class='v'>w</em>, which is smaller."},
+
+ {stem:"Which budget constraint describes a consumer facing a proportional tax at rate <em class='v'>t</em> on labor income in addition to the lump-sum tax T?",
+  options:["<em class='v'>c</em> &le; (1 &minus; <em class='v'>t</em>)[<em class='v'>w</em>(<em class='v'>h</em> &minus; &#8467;) + &pi; &minus; <em class='v'>T</em>]",
+           "<em class='v'>c</em> &le; <em class='v'>w</em>(<em class='v'>h</em> &minus; &#8467;) + &pi; &minus; <em class='v'>T</em> &minus; <em class='v'>t</em>",
+           "<em class='v'>c</em> &le; <em class='v'>w</em>(<em class='v'>h</em> &minus; &#8467;) + &pi; &minus; <em class='v'>T</em> &minus; &Delta;",
+           "<em class='v'>c</em> &le; (1 &minus; <em class='v'>t</em>)<em class='v'>w</em>(<em class='v'>h</em> &minus; &#8467;) + &pi; &minus; <em class='v'>T</em>"],
+  correct:3,
+  why:"Only labor earnings are taxed, so the rate multiplies <em class='v'>w</em>(<em class='v'>h</em> &minus; &#8467;) alone. Taxing &pi; &minus; <em class='v'>T</em> as well, or subtracting <em class='v'>t</em> as a lump sum, is a different policy."},
+
+ {stem:"How much revenue a proportional labor-income tax raises depends on&hellip;",
+  options:["the rate <em class='v'>t</em> and the time endowment <em class='v'>h</em> only",
+           "the rate <em class='v'>t</em> and nothing else about her choice",
+           "the rate <em class='v'>t</em> and the hours she chooses to work",
+           "the rate <em class='v'>t</em> and her dividend income &pi;"],
+  correct:2,
+  why:"Revenue is <em class='v'>t</em><em class='v'>w</em>(<em class='v'>h</em> &minus; &#8467;), and &#8467; is hers to choose. Setting the rate does not settle the revenue until she picks a bundle."},
+
+ {stem:"Moving along the proportional-tax budget line towards more leisure, the revenue collected&hellip;",
+  options:["is the same at every bundle on the line",
+           "falls, but stays above zero everywhere on the line",
+           "falls, and is zero when she takes all her time as leisure",
+           "rises, and is largest when she takes all her time as leisure"],
+  correct:2,
+  why:"Revenue is <em class='v'>t</em><em class='v'>w</em>(<em class='v'>h</em> &minus; &#8467;), which shrinks as &#8467; rises and is exactly zero at &#8467; = <em class='v'>h</em>, where she works nothing."},
+
+ {stem:"At a given level of leisure, the vertical gap between the untaxed budget line and the proportional-tax budget line measures&hellip;",
+  options:["the revenue the tax collects at that bundle",
+           "the extra revenue &Delta; the government set out to raise",
+           "the utility the consumer loses because of the tax",
+           "the net wage (1 &minus; <em class='v'>t</em>)<em class='v'>w</em>"],
+  correct:0,
+  why:"The gap is <em class='v'>t</em><em class='v'>w</em>(<em class='v'>h</em> &minus; &#8467;), the tax paid at that bundle. It happens to equal &Delta; at one bundle only."},
+
+ {stem:"The proportional tax has to raise the same revenue &Delta; as the lump-sum tax. How does that pin down the rate <em class='v'>t</em>?",
+  options:["It is the rate collecting &Delta; at the bundle chosen before any tax",
+           "It is the rate that leaves her as well off as the lump-sum tax does",
+           "It is the rate that makes the two budget lines parallel",
+           "It is the rate collecting &Delta; at the bundle chosen under that same rate"],
+  correct:3,
+  why:"The rate sets the budget line, the line sets her choice, and her choice sets the revenue. So the requirement has to hold at the bundle the rate itself induces."},
+
+ {stem:"Why does the bundle chosen under the proportional tax also satisfy the lump-sum budget constraint?",
+  options:["She is equally well off under either of the two taxes",
+           "At that bundle the proportional tax generate tax revenue equal to exactly &Delta;",
+           "Both taxes leave the kink of the budget line in the same place",
+           "Both budget lines have the same slope at that bundle"],
+  correct:1,
+  why:"Replacing <em class='v'>t</em><em class='v'>w</em>(<em class='v'>h</em> &minus; &#8467;) by &Delta; in the proportional-tax constraint turns it into the lump-sum constraint, holding with equality."},
+
+ {stem:"Two budget lines raise the same revenue &Delta;, one lump-sum and one proportional. Where do they cross?",
+  options:["At the kink, where leisure equals the time endowment",
+           "At the bundle chosen under the proportional tax",
+           "At the bundle chosen before either tax",
+           "At the bundle chosen under the lump-sum tax"],
+  correct:1,
+  why:"They cross where the proportional tax collects exactly &Delta;, and the rate was picked so that this happens at her own choice under that tax."},
+
+ {stem:"Why do those two budget lines cross at exactly one bundle rather than at several?",
+  options:["One of them is tangent to an indifference curve there",
+           "They are straight lines with different slopes, so they meet once",
+           "They both pass through the kink at &#8467; = <em class='v'>h</em>",
+           "They are straight lines with the same slope, so they cross once"],
+  correct:1,
+  why:"One has the wage as its slope, the other the net wage, so they are not parallel — and two straight lines that are not parallel meet exactly once."},
+
+ {stem:"At the bundle the consumer chooses under the proportional tax, the indifference curve through it is&hellip;",
+  options:["crossed by the proportional-tax budget line",
+           "tangent to the proportional-tax budget line",
+           "tangent to the lump-sum budget line",
+           "tangent to both budget lines at once"],
+  correct:1,
+  why:"That bundle is her optimum under the proportional tax, and at an optimum the indifference curve just touches the budget line she actually faces."},
+
+ {stem:"Given that the indifference curve tangent to the proportionate tax budget line at a point where the two budget line (under porportionate and lump-sum taxes) cross, why is the consumer strictly better off under the lump-sum tax?",
+  options:["The lump-sum line is tangent to a higher curve at the same bundle",
+           "The steeper lump-sum line cuts that indifference curve, so part of it lies above",
+           "The lump-sum line lies entirely above the proportional-tax line",
+           "The lump-sum tax leaves her more consumption at every level of leisure"],
+  correct:1,
+  why:"A straight line through a point of tangency, at a different slope, has to cross the curve. The stretch lying above it is affordable under the lump-sum tax and strictly preferred."},
+
+ {stem:"Calling a proportional labor-income tax <em>distortionary</em> means that&hellip;",
+  options:["it changes the rate at which she can trade leisure for consumption",
+           "it falls more heavily on consumers who earn more",
+           "it moves the budget line down without tilting it",
+           "it raises less revenue than the government intended"],
+  correct:0,
+  why:"It changes a price she faces, not just how much she has. That is what costs her utility over and above the revenue collected."},
+
+ {stem:"At equal revenue, the consumer prefers the lump-sum tax. That conclusion rests on&hellip;",
+  options:["A3, which makes consumption and leisure normal goods",
+           "the labor supply curve being upward-sloping",
+           "A4, which makes the substitution effect dominate",
+           "the fact that bundle  chosen under proportionate tax is also feasible under lump-sum tax"],
+  correct:3,
+  why:"Only the tangency is used. Nothing in the argument needs normality, A4, or any claim about which way hours move."},
+
+ {stem:"Given that proportionate taxes are distortionary, why do governments not simply use lump-sum taxes?",
+  options:["They raise less revenue than proportional taxes do",
+           "The same amount cannot be demanded of everyone when incomes differ",
+           "They distort the choice between consumption and leisure more",
+           "They shift the labor supply curve the wrong way"],
+  correct:1,
+  why:"Being the same for everybody is exactly what makes a lump-sum tax non-distortionary, and also what makes it unusable once incomes differ. So real systems are income-related, and carry an efficiency cost."}
+];
+
+/* ---------------------------------------------------------------- state */
+const LETTERS = ["a","b","c","d","e","f"];
+const app = document.getElementById("app");
+
+let learned, everWrong, queue, order, seen, firstTry, relearned, wrongHere, answered;
+
+/* Progress is kept in this browser only, under one key. A question counts as
+   mastered once it has been answered correctly at the first attempt of a
+   showing; missing it puts it back to "shaky" until that happens.            */
+const STORE_KEY = "ecn313-lump-sum-vs-proportional-v1";
+let mastered;            // stored: answered right at the first attempt, persisted
+let touched;             // stored: has been seen at some point
+let sessionResult;       // this session only: qid -> true/false, not yet saved
+let savedThisVisit;      // has the student pressed Save during this visit
+
+function loadStore(){
+  try{
+    const raw = localStorage.getItem(STORE_KEY);
+    if(raw){
+      const o = JSON.parse(raw);
+      if(Array.isArray(o.mastered) && o.mastered.length === QUESTIONS.length
+         && Array.isArray(o.touched) && o.touched.length === QUESTIONS.length){
+        mastered = o.mastered.slice(); touched = o.touched.slice(); return true;
+      }
+    }
+  }catch(e){}
+  return false;
+}
+/* What the stored record would become if the student chooses to save. */
+function mergedMastered(){
+  return mastered.map((m,i)=> i in sessionResult ? sessionResult[i] : m);
+}
+function mergedTouched(){
+  return touched.map((t,i)=> (i in sessionResult) ? true : t);
+}
+function saveStore(){
+  mastered = mergedMastered();
+  touched  = mergedTouched();
+  try{
+    localStorage.setItem(STORE_KEY,
+      JSON.stringify({mastered, touched, saved:Date.now()}));
+    return true;
+  }catch(e){ return false; }
+}
+function clearStore(){
+  try{ localStorage.removeItem(STORE_KEY); }catch(e){}
+  mastered = new Array(QUESTIONS.length).fill(false);
+  touched  = new Array(QUESTIONS.length).fill(false);
+}
+function hasHistory(){ return touched.some(Boolean); }
+function notMastered(){ return QUESTIONS.map((_,i)=>i).filter(i=>!mastered[i]); }
+
+function resetAll(){
+  learned  = new Array(QUESTIONS.length).fill(false);
+  everWrong= new Array(QUESTIONS.length).fill(false);
+}
+
+function initStore(){
+  if(!loadStore()){
+    mastered = new Array(QUESTIONS.length).fill(false);
+    touched  = new Array(QUESTIONS.length).fill(false);
+  }
+}
+
+function startSession(pool){
+  queue = pool.slice();
+  seen = new Set(); firstTry = new Set(); relearned = new Set();
+  sessionResult = {}; savedThisVisit = false;
+  nextQuestion();
+}
+
+function nextQuestion(){
+  if(queue.length === 0){ renderEnd(true); return; }
+  wrongHere = 0; answered = false;
+  const qid = queue[0];
+  order = shuffled(QUESTIONS[qid].options.map((_,i)=>i));
+  renderQuestion(qid);
+}
+
+function shuffled(a){
+  const r = a.slice();
+  for(let i=r.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [r[i],r[j]]=[r[j],r[i]]; }
+  return r;
+}
+
+/* --------------------------------------------------------------- screens */
+function renderHome(){
+  const done = mastered.filter(Boolean).length;
+  const left = notMastered();
+
+  if(hasHistory()){
+    app.innerHTML = `
+      <div class="card">
+        <p class="qmeta">Saved progress found on this device</p>
+        <p class="stem">Last time you answered <b>${done}</b> of
+          ${QUESTIONS.length} questions correctly at the first attempt.
+          What would you like to practise?</p>
+        <div class="row">
+          ${left.length
+            ? `<button class="btn" id="go-left">Only the ${left.length} I have not learned</button>`
+            : ``}
+          <button class="btn ${left.length ? "ghost" : ""}" id="go-all">All ${QUESTIONS.length} questions</button>
+        </div>
+        <div class="row">
+          <button class="btn quiet" id="forget">Clear saved progress</button>
+        </div>
+        <p class="note" style="margin-top:.9rem">Progress is kept in this
+          browser, on this device only, and never leaves it.</p>
+      </div>`;
+    document.getElementById("go-all").onclick =
+      ()=>{ resetAll(); startSession(QUESTIONS.map((_,i)=>i)); };
+    const bl = document.getElementById("go-left");
+    if(bl) bl.onclick = ()=>{ resetAll(); startSession(left); };
+    document.getElementById("forget").onclick =
+      ()=>{ clearStore(); resetAll(); renderHome(); };
+    return;
+  }
+
+  app.innerHTML = `
+    <div class="card">
+      <p class="stem">Twenty questions on the consumer's problem, in the order
+        the notes cover them. Get one right first time and it is done. Get it
+        wrong and you keep choosing until you find the answer &mdash; then that
+        question comes back later in the session.</p>
+      <p class="note">At the end you can save your progress on this device, so
+        that next time you can practise just the ones you have not learned.</p>
+      <div class="row">
+        <button class="btn" id="go-all">Start practice session</button>
+      </div>
+    </div>`;
+  document.getElementById("go-all").onclick =
+    ()=>{ resetAll(); startSession(QUESTIONS.map((_,i)=>i)); };
+}
+
+function renderQuestion(qid){
+  const q = QUESTIONS[qid];
+  const total = QUESTIONS.length;
+  const doneCount = learned.filter(Boolean).length;
+  app.innerHTML = `
+    <div class="bar"><div style="width:${(doneCount/total*100).toFixed(1)}%"></div></div>
+    <div class="card">
+      <p class="qmeta">Question ${qid+1} of ${total} &middot; ${queue.length} left this round</p>
+      <p class="stem">${q.stem}</p>
+      <ul class="options" id="opts">
+        ${order.map((oi,pos)=>`
+          <li><button class="opt" data-oi="${oi}">
+            <span class="tag">(${LETTERS[pos]})</span><span>${q.options[oi]}</span>
+          </button></li>`).join("")}
+      </ul>
+      <div id="verdict"></div>
+      <div class="row">
+        <div id="advance"></div>
+        <div class="spacer"></div>
+        <button class="btn quiet" id="end">End session</button>
+      </div>
+    </div>`;
+  document.querySelectorAll("#opts .opt").forEach(b=>{
+    b.onclick = ()=>choose(qid, parseInt(b.dataset.oi,10), b);
+  });
+  document.getElementById("end").onclick = ()=>renderEnd(false);
+}
+
+function choose(qid, oi, btn){
+  if(answered) return;
+  const q = QUESTIONS[qid];
+  const firstShowing = !seen.has(qid);
+  seen.add(qid);
+  touched[qid] = true;
+  const verdict = document.getElementById("verdict");
+
+  if(oi !== q.correct){
+    everWrong[qid] = true; wrongHere++;
+    sessionResult[qid] = false;
+    btn.classList.add("wrong"); btn.disabled = true;
+    const left = document.querySelectorAll("#opts .opt:not(:disabled)").length;
+    verdict.innerHTML = `<div class="verdict no"><b>Not quite.</b>
+      ${left > 1 ? "Try again — pick from what is left."
+                 : "One option left; it has to be that one."}</div>`;
+    return;
+  }
+
+  answered = true;
+  btn.classList.add("right");
+  document.querySelectorAll("#opts .opt").forEach(b=>b.disabled = true);
+
+  let head, tail;
+  if(wrongHere === 0){
+    queue.shift();
+    learned[qid] = true;
+    if(everWrong[qid]){ relearned.add(qid); head = "Right — and that one is learned."; }
+    else             { firstTry.add(qid);  head = "Correct, first time."; }
+    if(firstShowing && !everWrong[qid] && !(qid in sessionResult)){
+      sessionResult[qid] = true;
+    }
+    tail = "It will not come up again.";
+  }else{
+    queue.shift(); queue.push(qid);
+    head = "That's the one.";
+    tail = "This question will come back once the others have been through.";
+  }
+  verdict.innerHTML = `<div class="verdict ok"><b>${head}</b>${q.why}
+    <span class="note"><br>${tail}</span></div>`;
+  const adv = document.getElementById("advance");
+  adv.innerHTML = `<button class="btn" id="next">${queue.length ? "Next question" : "Finish"}</button>`;
+  document.getElementById("next").onclick = nextQuestion;
+}
+
+function renderEnd(cleared){
+  const attempted = seen.size;
+  const clean = firstTry.size;
+  const fixed = relearned.size;
+  const wouldBe = mergedMastered();
+  const wouldLeft = wouldBe.map((m,i)=>i).filter(i=>!wouldBe[i]);
+  const doneAfter = wouldBe.filter(Boolean).length;
+  const anythingToSave = Object.keys(sessionResult).length > 0;
+
+  app.innerHTML = `
+    <div class="card">
+      <p class="qmeta">${cleared ? "Round complete" : "Session ended"}</p>
+      <p class="stem">${cleared
+        ? "Everything in this round has been answered."
+        : "Here is how the session went."}</p>
+      <table class="stats">
+        <tr><td>Questions attempted</td><td class="n">${attempted}</td></tr>
+        <tr><td>Answered correctly at the first attempt</td><td class="n">${clean}</td></tr>
+        <tr><td>Learned after getting it wrong first</td><td class="n">${fixed}</td></tr>
+      </table>
+
+      <div id="savebox">
+      ${anythingToSave ? `
+        <div class="verdict ok" style="margin-top:1rem">
+          <b>Save your progress?</b>
+          Saving records which questions you answered correctly at the first
+          attempt, so that next time you can practise only the rest. It is kept
+          <b>in this browser, on this device only</b> &mdash; nothing is sent
+          anywhere.
+        </div>
+        <div class="row">
+          <button class="btn" id="save">Save on this device</button>
+          <button class="btn quiet" id="nosave">Don't save</button>
+        </div>` : ``}
+      </div>
+
+      <div class="row" id="nextsteps">
+        <button class="btn ghost" id="again">Practise the ${wouldLeft.length} not yet learned</button>
+        <button class="btn ghost" id="all">Practise all ${QUESTIONS.length}</button>
+        <button class="btn quiet" id="home">Back to start</button>
+      </div>
+    </div>`;
+
+  const box = document.getElementById("savebox");
+  const bs = document.getElementById("save");
+  if(bs) bs.onclick = ()=>{
+    const ok = saveStore();
+    savedThisVisit = true;
+    box.innerHTML = ok
+      ? `<div class="verdict ok" style="margin-top:1rem"><b>Saved on this device.</b>
+         ${doneAfter} of ${QUESTIONS.length} questions are recorded as learned.
+         Next time you open this page you can pick up where you left off.</div>`
+      : `<div class="verdict no" style="margin-top:1rem"><b>Could not save.</b>
+         Your browser is blocking storage — private browsing usually does this.</div>`;
+  };
+  const bn = document.getElementById("nosave");
+  if(bn) bn.onclick = ()=>{
+    box.innerHTML = `<p class="note" style="margin-top:1rem">Nothing saved.
+      Closing the page will clear this session.</p>`;
+  };
+
+  const againBtn = document.getElementById("again");
+  if(wouldLeft.length === 0){ againBtn.remove(); }
+  else againBtn.onclick = ()=>{ resetAll(); startSession(wouldLeft); };
+  document.getElementById("all").onclick =
+    ()=>{ resetAll(); startSession(QUESTIONS.map((_,i)=>i)); };
+  document.getElementById("home").onclick = renderHome;
+}
+
+initStore();
+resetAll();
+renderHome();
+</script>
+</body>
+</html>

@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Intermediate Macroeconomics &mdash; Analytical solution practice</title>
+<style>
+  :root{
+    --ink:#1A1A1C; --accent:#1F3A6E; --budget:#15607A; --ic:#B21F35;
+    --note:#8A6212; --muted:#6B6E76; --rule:#D8DCE3; --paper:#FFFFFF;
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    margin:0; padding:26px 18px 60px;
+    font-family:"Palatino Linotype",Palatino,"Book Antiqua","URW Palladio L",Georgia,serif;
+    font-size:17px; line-height:1.5; color:var(--ink); background:var(--paper);
+  }
+  .wrap{max-width:640px; margin:0 auto}
+  h1{font-size:1.5rem; color:var(--accent); margin:0 0 2px; line-height:1.25}
+  p.sub{margin:0 0 18px; color:var(--muted); font-style:italic; font-size:0.95rem}
+  hr.top{border:0; border-top:1.2px solid var(--accent); margin:0 0 14px}
+  em.v{font-style:italic}
+  .bar{display:flex; justify-content:space-between; align-items:baseline;
+       font-size:0.85rem; color:var(--muted); border-bottom:0.4px solid var(--rule);
+       padding-bottom:6px; margin-bottom:18px}
+  .stem{margin:0 0 16px}
+  ol.opts{list-style:none; margin:0; padding:0}
+  ol.opts li{margin:0 0 9px}
+  button.opt{
+    width:100%; text-align:left; font:inherit; color:var(--ink);
+    background:#fff; border:1px solid var(--rule); border-left:2.2px solid var(--rule);
+    border-radius:0; padding:10px 12px; cursor:pointer; line-height:1.4;
+  }
+  button.opt:hover:not(:disabled){border-left-color:var(--budget); background:#F7F9FB}
+  button.opt:disabled{cursor:default}
+  button.opt.wrong{color:var(--muted); text-decoration:line-through;
+                   border-left-color:var(--note); background:#FCFAF4}
+  button.opt.right{border-left-color:var(--accent); background:#F1F4F9;
+                   text-decoration:none; color:var(--ink)}
+  .why{border-left:2.2px solid var(--accent); background:#F1F4F9;
+       padding:11px 13px; margin:16px 0 0}
+  .why.after-miss{border-left-color:var(--note); background:#FCFAF4}
+  .why b{color:var(--accent)}
+  .why.after-miss b{color:var(--note)}
+  .actions{margin-top:20px; display:flex; gap:10px; flex-wrap:wrap}
+  button.go{font:inherit; padding:9px 16px; cursor:pointer; border-radius:0;
+            border:1px solid var(--accent); background:var(--accent); color:#fff}
+  button.go:hover{background:#172d55}
+  button.ghost{font:inherit; padding:9px 16px; cursor:pointer; border-radius:0;
+               border:1px solid var(--rule); background:#fff; color:var(--muted)}
+  button.ghost:hover{border-color:var(--muted); color:var(--ink)}
+  .card{border-left:2.2px solid var(--accent); background:#F1F4F9; padding:14px 16px}
+  .card h2{font-size:1.05rem; margin:0 0 8px; color:var(--accent)}
+  table.tally{border-collapse:collapse; margin:4px 0 2px; font-size:0.97rem}
+  table.tally td{padding:3px 0}
+  table.tally td.n{text-align:right; padding-right:10px; width:2.6em;
+                   font-weight:bold; color:var(--accent)}
+  .foot{margin-top:34px; padding-top:10px; border-top:0.4px solid var(--rule);
+        font-size:0.82rem; color:var(--muted)}
+  .foot a{color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <hr class="top">
+  <h1>Analytical solution &mdash; practice</h1>
+  <p class="sub">Intermediate Macroeconomics</p>
+  <div id="app"></div>
+  <div class="foot">Not graded. Nothing you do here is recorded anywhere or seen by anyone
+    &mdash; if you choose to save your progress it is kept in this browser, on this device only.</div>
+</div>
+
+<script>
+/* ---------------------------------------------------------------- questions */
+/* Options are shuffled on every showing, so their order here carries no
+   meaning and no stem may refer to "the first option". `correct` is a
+   zero-based index into `options`; the right answer is written first in every
+   block, so the indices are all 0 and easy to proofread. */
+const QUESTIONS = [
+
+{stem:"What does solving the consumer's problem analytically deliver that solving it on a graph does not?",
+ options:["Predictions of how much the optimal choice changes, not just the direction",
+          "Results that hold for any utility function satisfying the assumptions",
+          "A proof that the indifference curves are convex rather than concave",
+          "A guarantee that the consumer spends her entire disposable income"],
+ correct:0,
+ why:"Formulas can be evaluated, so they answer &quot;by how much&quot;. Holding for every utility function is the strength of the <em>graphical</em> method, which is why we keep using both."},
+
+{stem:"When solving the problem analytically we write the budget constraint as <em class='v'>c</em> = <em class='v'>w</em>(<em class='v'>h</em> &minus; &#8467;) + &pi; &minus; <em class='v'>T</em> rather than with &le;. Which assumption lets us do that?",
+ options:["A1, since the consumer never chooses a bundle strictly inside the budget set",
+          "A2, since a mix of two equally good bundles is at least as good as either",
+          "A3, since consumption and leisure both rise when disposable income rises",
+          "A4, since a higher wage raises hours worked rather than lowering them"],
+ correct:0,
+ why:"More is better than less, so from a bundle inside the budget set she could take more of both goods and still afford it. That is also what lets us substitute the constraint: an equality can be substituted, an inequality cannot."},
+
+{stem:"Which of the assumptions on preferences can be checked by looking at the utility function itself, without solving the problem?",
+ options:["A1 and A2", "A3 and A4", "A1 and A3", "A2 and A4"],
+ correct:0,
+ why:"A1 and A2 restrict the function: one is about whether it increases, the other about the shape of its level curves. A3 and A4 restrict the optimal choice, so they can only be checked once the problem is solved."},
+
+{stem:"Which assumption does <em class='v'>u</em>(<em class='v'>c</em>, &#8467;) = <em class='v'>c</em> &minus; &#8467; violate?",
+ options:["A1, more is better than less",
+          "only A2, preference for diversity",
+          "A3, <em class='v'>c</em> and &#8467; are normal goods",
+          "A4, the substitution effect dominates the income effect"],
+ correct:0,
+ why:"Utility falls as leisure rises, so this consumer dislikes leisure. That settles it without drawing a single indifference curve."},
+
+{stem:"Preference for diversity (A2) is the same thing as which property of the indifference curves?",
+ options:["They are convex (same as concave up)",
+          "They are downward sloping",
+          "They never intersect one another",
+          "Curves further from the origin carry higher utility"],
+ correct:0,
+ why:"A2 says a mix of two equally good bundles is at least as good as either, and that is exactly what convexity means. The other three properties follow from A1."},
+
+{stem:"For <em class='v'>u</em>(<em class='v'>c</em>, &#8467;) = <em class='v'>c</em> + &#8467;, what is the equation of the <em class='v'>u</em><sub>0</sub>-level indifference curve?",
+ options:["<em class='v'>c</em> = <em class='v'>u</em><sub>0</sub> &minus; &#8467;",
+          "<em class='v'>c</em> = <em class='v'>u</em><sub>0</sub> &#8725; &#8467;",
+          "<em class='v'>c</em> = <em class='v'>u</em><sub>0</sub> &minus; &#8467;<sup>2</sup>",
+          "<em class='v'>c</em> = <em class='v'>u</em><sub>0</sub> + &#8467;"],
+ correct:0,
+ why:"Set <em class='v'>c</em> + &#8467; = <em class='v'>u</em><sub>0</sub> and solve for <em class='v'>c</em>. The curve is a straight line of slope &minus;1."},
+
+{stem:"The indifference curves of <em class='v'>u</em>(<em class='v'>c</em>, &#8467;) = <em class='v'>c</em> + &#8467; are straight lines. What does that tell us?",
+ options:["A2 fails, since straight lines are not strictly convex",
+          "A1 fails, since utility does not rise in both goods",
+          "A2 fails, since the curves bend away from the origin",
+          "A1 fails, since the curves are straight rather than curved"],
+ correct:0,
+ why:"A1 is fine here: utility rises in <em class='v'>c</em> and in &#8467;. It is diversity that fails, because a mix of two equally good bundles is no <em>better</em> than the extremes."},
+
+{stem:"For <em class='v'>u</em>(<em class='v'>c</em>, &#8467;) = <em class='v'>c</em> + &#8467;<sup>2</sup> the <em class='v'>u</em><sub>0</sub>-level indifference curve is <em class='v'>c</em> = <em class='v'>u</em><sub>0</sub> &minus; &#8467;<sup>2</sup>. What shape is it, and what follows?",
+ options:["Concave, so A2 fails", "Convex, so A2 holds", "Linear, so A2 fails", "Convex, so A2 fails"],
+ correct:0,
+ why:"It is an upside-down parabola, which bends away from the origin rather than toward it. A2 requires convexity, so it fails &mdash; more badly than in the linear case."},
+
+{stem:"For <em class='v'>u</em>(<em class='v'>c</em>, &#8467;) = <em class='v'>c</em> &middot; &#8467;, what is the equation of the <em class='v'>u</em><sub>0</sub>-level indifference curve?",
+ options:["<em class='v'>c</em> = <em class='v'>u</em><sub>0</sub> &#8725; &#8467;",
+          "<em class='v'>c</em> = <em class='v'>u</em><sub>0</sub> &minus; &#8467;",
+          "<em class='v'>c</em> = <em class='v'>u</em><sub>0</sub> &middot; &#8467;",
+          "<em class='v'>c</em> = &#8467; &#8725; <em class='v'>u</em><sub>0</sub>"],
+ correct:0,
+ why:"Set <em class='v'>c</em> &middot; &#8467; = <em class='v'>u</em><sub>0</sub> and divide by &#8467;. The curve is a hyperbola."},
+
+{stem:"Differentiating the indifference curve <em class='v'>c</em> = <em class='v'>u</em><sub>0</sub> &#8725; &#8467; twice with respect to &#8467; gives 2<em class='v'>u</em><sub>0</sub> &#8725; &#8467;<sup>3</sup>, which is positive. What does that establish?",
+ options:["The indifference curve is convex, so A2 holds",
+          "The indifference curve slopes downward, so A1 holds",
+          "Consumption and leisure are normal goods, so A3 holds",
+          "The substitution effect dominates, so A4 holds"],
+ correct:0,
+ why:"A positive second derivative is convexity, checked with calculus rather than by eye. It is quicker and it does not depend on how carefully the curve is drawn."},
+
+{stem:"What is the first step in solving the consumer's problem analytically using the substitution (not Lagrangian) method?",
+ options:["Substitute the constraint into the utility function, eliminating <em class='v'>c</em>",
+          "Differentiate the utility function with respect to <em class='v'>c</em>",
+          "Set MRS equal to <em class='v'>w</em> and solve that equation for <em class='v'>w</em>",
+          "Compute hours worked as <em class='v'>h</em> &minus; &#8467; and substitute it for &#8467;"],
+ correct:0,
+ why:"The constraint already expresses <em class='v'>c</em> as a function of &#8467;, so substituting it turns a constrained problem in two variables into an unconstrained one in &#8467; alone."},
+
+{stem:"At a point where the first derivative of a function is zero, what distinguishes a maximum from a minimum?",
+ options:["The sign of the second derivative",
+          "The sign of the first derivative",
+          "Whether the point lies inside the budget set",
+          "The value the function takes at that point"],
+ correct:0,
+ why:"The graph is flat at both a peak and a trough, so the first-order condition alone cannot tell them apart. A negative second derivative marks a maximum."},
+
+{stem:"In the consumer's budget constraint, income falls by <em class='v'>w</em> for each extra hour of leisure she takes. What does that number represent?",
+ options:["The consumption she gives up to take one more hour of leisure",
+          "The extra utility she gets from one more hour of leisure",
+          "The total income she earns from working the whole endowment",
+          "The slope of the indifference curve at that bundle"],
+ correct:0,
+ why:"It is the slope of the budget line: the market rate at which leisure trades for consumption. The slope of the indifference curve is the rate at which she is <em>willing</em> to trade them, and the two are equal only at the optimum."},
+
+{stem:"A consumer's optimal leisure is &#8467;* = <em class='v'>h</em>&#8725;2 + (&pi; &minus; <em class='v'>T</em>) &#8725; 2<em class='v'>w</em>, so non-labor income is divided by the wage. Economically, why does the same non-labor income add less leisure when the wage is high?",
+ options:["Because an hour of leisure costs more consumption when the wage is high",
+          "Because non-labor income is worth less when the wage is high",
+          "Because the time endowment is smaller when the wage is high",
+          "Because the consumer works fewer hours when the wage is high"],
+ correct:0,
+ why:"An hour of leisure is paid for in forgone earnings, so its price is <em class='v'>w</em>. The same extra income therefore buys fewer hours of it the better work is paid."},
+
+{stem:"In the solution for <em class='v'>u</em>(<em class='v'>c</em>, &#8467;) = <em class='v'>c</em> &middot; &#8467;, dividends and taxes never appear separately: they enter only through &pi; &minus; <em class='v'>T</em>. What follows?",
+ options:["A rise in dividends matched by an equal rise in the tax leaves her choice unchanged",
+          "A rise in dividends matched by an equal rise in the tax raises hours worked",
+          "A rise in dividends matched by an equal rise in the tax lowers hours worked",
+          "A rise in dividends matched by an equal rise in the tax lowers consumption only"],
+ correct:0,
+ why:"The budget line is pinned down by its slope and its kink at (<em class='v'>h</em>, &pi; &minus; <em class='v'>T</em>). If the difference does not move, neither does the budget line, so neither does the optimal bundle."},
+
+{stem:"Which feature of the formulas for <em class='v'>u</em>(<em class='v'>c</em>, &#8467;) = <em class='v'>c</em> &middot; &#8467; shows that leisure is a normal good?",
+ options:["&#8467;* rises when &pi; &minus; <em class='v'>T</em> rises",
+          "&#8467;* falls when the wage <em class='v'>w</em> rises",
+          "<em class='v'>c</em>* rises when the wage <em class='v'>w</em> rises",
+          "&#8467;* stays below the endowment <em class='v'>h</em> at every wage"],
+ correct:0,
+ why:"Normality is about the response to income: in &#8467;* = <em class='v'>h</em>&#8725;2 + (&pi; &minus; <em class='v'>T</em>) &#8725; 2<em class='v'>w</em> the second term rises with &pi; &minus; <em class='v'>T</em>. The response to the wage is what A4 is about instead."},
+
+{stem:"Which feature of the formulas for <em class='v'>u</em>(<em class='v'>c</em>, &#8467;) = <em class='v'>c</em> &middot; &#8467; shows that A4 holds?",
+ options:["&#8467;* falls when <em class='v'>w</em> rises",
+          "&#8467;* rises when &pi; &minus; <em class='v'>T</em> rises",
+          "<em class='v'>c</em>* rises when &pi; &minus; <em class='v'>T</em> rises",
+          "<em class='v'>N</em>* falls when &pi; &minus; <em class='v'>T</em> rises at a given wage"],
+ correct:0,
+ why:"A4 says a higher wage raises hours worked. The wage appears only in a denominator, so a higher <em class='v'>w</em> shrinks the second term, lowers &#8467;* and raises <em class='v'>N</em>*. The other three statements are true but are about income, not about the wage."},
+
+{stem:"A consumer's labor supply curve is <em class='v'>N</em>*(<em class='v'>w</em>) = <em class='v'>h</em>&#8725;2 &minus; (&pi; &minus; <em class='v'>T</em>) &#8725; 2<em class='v'>w</em>. What happens to hours worked as the wage grows without limit?",
+ options:["They approach <em class='v'>h</em>&#8725;2 from below, without reaching it",
+          "They approach <em class='v'>h</em> from below, without reaching it",
+          "They reach <em class='v'>h</em>&#8725;2 at a finite wage and stay there",
+          "They keep rising without limit as the wage rises"],
+ correct:0,
+ why:"The subtracted term shrinks toward zero but never becomes zero, so this consumer never works more than half her time endowment however well work is paid."},
+
+{stem:"A consumer's labor supply curve is <em class='v'>N</em>*(<em class='v'>w</em>) = <em class='v'>h</em>&#8725;2 &minus; (&pi; &minus; <em class='v'>T</em>) &#8725; 2<em class='v'>w</em>. What happens to hours worked at a given wage when the lump-sum tax is raised?",
+ options:["They rise, because the term being subtracted becomes smaller",
+          "They fall, because the term being subtracted becomes smaller",
+          "They rise, because the first term becomes larger",
+          "They do not change, because the wage has not changed"],
+ correct:0,
+ why:"A higher tax lowers &pi; &minus; <em class='v'>T</em>, so less is taken away from <em class='v'>h</em>&#8725;2. The labor supply curve shifts right &mdash; the same comparative static the graph gave, now readable off the formula."},
+
+{stem:"For <em class='v'>u</em>(<em class='v'>c</em>, &#8467;) = <em class='v'>c</em> &middot; &#8467; the solution can be written as <em class='v'>c</em>* = (<em class='v'>w</em><em class='v'>h</em> + &pi; &minus; <em class='v'>T</em>)&#8725;2 and <em class='v'>w</em>&#8467;* = (<em class='v'>w</em><em class='v'>h</em> + &pi; &minus; <em class='v'>T</em>)&#8725;2. What do these two say about how the consumer divides her full income?",
+ options:["Half of it goes to consumption and half is taken as leisure, whatever the wage",
+          "The share taken as leisure rises with the wage, so hours worked fall",
+          "The share taken as leisure falls as the time endowment rises",
+          "All of it goes to consumption once the wage is high enough"],
+ correct:0,
+ why:"The two halves are equal and neither depends on <em class='v'>w</em>, <em class='v'>h</em> or &pi; &minus; <em class='v'>T</em>. That fixed split is a feature of this particular utility function, not of the model."},
+
+];
+
+/* -------------------------------------------------------------------- store */
+/* Unique per quiz. Two quizzes sharing a key share saved progress. Bump the
+   -v1 if the questions change substantially, which retires stale progress. */
+const STORE_KEY = "ecn313-analytical-solution-v1";
+
+function loadLearned(){
+  try{
+    const raw = localStorage.getItem(STORE_KEY);
+    if(!raw) return [];
+    const v = JSON.parse(raw);
+    return Array.isArray(v.learned) ? v.learned : [];
+  }catch(e){ return []; }
+}
+function saveLearned(list){
+  try{
+    localStorage.setItem(STORE_KEY, JSON.stringify({learned:list, n:QUESTIONS.length}));
+    return true;
+  }catch(e){ return false; }
+}
+
+/* -------------------------------------------------------------------- state */
+const app = document.getElementById("app");
+let queue = [];        // question indices still to be answered cleanly
+let asked = new Set(); // questions shown at least once this session
+let missed = new Set();// questions missed on their first attempt this session
+let clean = new Set(); // questions answered right at the first attempt
+let learnedAfterMiss = new Set();
+let missedNow = false; // a miss on the current showing
+
+function shuffled(a){
+  const b = a.slice();
+  for(let i=b.length-1;i>0;i--){ const j = Math.floor(Math.random()*(i+1)); [b[i],b[j]]=[b[j],b[i]]; }
+  return b;
+}
+
+/* --------------------------------------------------------------- start menu */
+function start(){
+  const learned = loadLearned();
+  const remaining = QUESTIONS.map((q,i)=>i).filter(i=>!learned.includes(i));
+  if(learned.length === 0 || remaining.length === 0){
+    begin(QUESTIONS.map((q,i)=>i));
+    return;
+  }
+  app.innerHTML =
+    '<div class="card"><h2>Welcome back</h2>' +
+    '<p style="margin:0 0 6px">You have already answered ' + learned.length + ' of ' +
+    QUESTIONS.length + ' questions correctly at the first attempt on this device. ' +
+    'What would you like to practise?</p></div>' +
+    '<div class="actions">' +
+    '<button class="go" id="only">The ' + remaining.length + ' not yet learned</button>' +
+    '<button class="ghost" id="all">All ' + QUESTIONS.length + ' questions</button>' +
+    '</div>';
+  document.getElementById("only").onclick = () => begin(remaining);
+  document.getElementById("all").onclick  = () => begin(QUESTIONS.map((q,i)=>i));
+}
+
+function begin(list){
+  queue = list.slice();            // file order: the quiz walks the chapter
+  asked = new Set(); missed = new Set(); clean = new Set(); learnedAfterMiss = new Set();
+  if(queue.length === 0){ finish(); return; }
+  render();
+}
+
+/* ------------------------------------------------------------------- render */
+function render(){
+  if(queue.length === 0){ finish(); return; }
+  missedNow = false;
+  const qi = queue[0], q = QUESTIONS[qi];
+  const order = shuffled(q.options.map((t,k)=>k));
+
+  let html =
+    '<div class="bar"><span>' + queue.length + ' question' + (queue.length===1?'':'s') +
+    ' left in this session</span><span>' + clean.size + ' learned</span></div>' +
+    '<p class="stem">' + q.stem + '</p><ol class="opts">';
+  order.forEach(k => {
+    html += '<li><button class="opt" data-k="' + k + '">' + q.options[k] + '</button></li>';
+  });
+  html += '</ol><div id="feedback"></div>' +
+          '<div class="actions"><button class="ghost" id="end">End session</button></div>';
+  app.innerHTML = html;
+
+  app.querySelectorAll("button.opt").forEach(b => {
+    b.onclick = () => choose(qi, parseInt(b.dataset.k,10), b);
+  });
+  document.getElementById("end").onclick = finish;
+  window.scrollTo(0,0);
+}
+
+function choose(qi, k, btn){
+  const q = QUESTIONS[qi];
+  asked.add(qi);
+  if(k !== q.correct){
+    // strike the option out and disable it; keep choosing from what is left
+    btn.classList.add("wrong");
+    btn.disabled = true;
+    if(!missedNow){ missedNow = true; missed.add(qi); }
+    return;
+  }
+  // correct
+  btn.classList.add("right");
+  app.querySelectorAll("button.opt").forEach(b => b.disabled = true);
+
+  const firstAttempt = !missedNow;
+  if(firstAttempt){
+    if(missed.has(qi)) learnedAfterMiss.add(qi); else clean.add(qi);
+    queue.shift();                       // retired for this session
+  }else{
+    queue.shift(); queue.push(qi);       // back of the queue: answer it cleanly later
+  }
+
+  const fb = document.getElementById("feedback");
+  fb.innerHTML =
+    '<div class="why' + (firstAttempt ? '' : ' after-miss') + '"><b>' +
+    (firstAttempt ? "That's right." : "Found it &mdash; this one comes back later.") +
+    '</b> ' + q.why + '</div>' +
+    '<div class="actions"><button class="go" id="next">' +
+    (queue.length ? 'Next question' : 'See how you did') +
+    '</button><button class="ghost" id="end2">End session</button></div>';
+  document.getElementById("next").onclick = render;
+  document.getElementById("end2").onclick = finish;
+}
+
+/* ------------------------------------------------------------- end of session */
+function finish(){
+  const attempted = asked.size;
+  let html =
+    '<div class="card"><h2>End of session</h2><table class="tally">' +
+    '<tr><td class="n">' + attempted + '</td><td>question' + (attempted===1?'':'s') + ' attempted</td></tr>' +
+    '<tr><td class="n">' + clean.size + '</td><td>right at the first attempt</td></tr>' +
+    '<tr><td class="n">' + learnedAfterMiss.size + '</td><td>learned after an initial miss</td></tr>' +
+    '</table></div>';
+
+  if(clean.size > 0){
+    html += '<div class="card" style="margin-top:14px"><h2>Save your progress?</h2>' +
+      '<p style="margin:0">Saving records which questions you answered correctly at the ' +
+      'first attempt, in this browser on this device, so next time you can practise ' +
+      'just the ones you have not learned yet. It is up to you.</p></div>' +
+      '<div class="actions"><button class="go" id="save">Save progress</button>' +
+      '<button class="ghost" id="nosave">Don\'t save</button></div>';
+  }else{
+    html += '<div class="actions"><button class="go" id="again">Start again</button></div>';
+  }
+  app.innerHTML = html;
+
+  const again = document.getElementById("again");
+  if(again) again.onclick = start;
+  const save = document.getElementById("save");
+  if(save){
+    save.onclick = () => {
+      const merged = Array.from(new Set(loadLearned().concat(Array.from(clean)))).sort((a,b)=>a-b);
+      const ok = saveLearned(merged);
+      done(ok ? 'Saved. ' + merged.length + ' of ' + QUESTIONS.length +
+                ' questions are marked as learned on this device.'
+              : 'This browser would not let the page save anything, so nothing was stored.');
+    };
+    document.getElementById("nosave").onclick = () => done('Nothing was saved.');
+  }
+}
+
+function done(msg){
+  app.innerHTML = '<div class="card"><h2>Done</h2><p style="margin:0">' + msg + '</p></div>' +
+    '<div class="actions"><button class="go" id="again2">Practise again</button></div>';
+  document.getElementById("again2").onclick = start;
+}
+
+start();
+</script>
+</body>
+</html>
