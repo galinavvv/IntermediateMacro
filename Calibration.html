@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Intermediate Macroeconomics — Calibration practice</title>
+<style>
+  :root{--ink:#1A1A1C;--accent:#1F3A6E;--budget:#15607A;--ic:#B21F35;--note:#8A6212;
+        --muted:#6B6E76;--rule:#D8DCE3;--bg:#FAFAF8;--card:#FFFFFF;--good:#2E7D4F}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+       font-family:"Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+       font-size:18px;line-height:1.5}
+  main{max-width:720px;margin:0 auto;padding:28px 18px 60px}
+  h1{color:var(--accent);font-size:1.6em;margin:0 0 2px}
+  p.sub{color:var(--muted);font-style:italic;margin:0 0 22px}
+  .card{background:var(--card);border-left:4px solid var(--accent);padding:18px 20px;
+        box-shadow:0 1px 3px rgba(0,0,0,.06);margin-bottom:16px}
+  .meta{color:var(--muted);font-size:.85em;margin-bottom:10px;display:flex;justify-content:space-between;gap:10px}
+  .stem{margin:0 0 14px}
+  em.v{font-style:italic}
+  button{font:inherit;cursor:pointer}
+  .opt{display:block;width:100%;text-align:left;background:#fff;border:1px solid var(--rule);
+       border-radius:4px;padding:10px 14px;margin:8px 0;color:var(--ink);line-height:1.4}
+  .opt:hover:not(:disabled){border-color:var(--budget);background:#F2F7F9}
+  .opt.wrong{text-decoration:line-through;color:var(--muted);background:#F6F1F1;border-color:#E3CACA;cursor:default}
+  .opt.right{border-color:var(--good);background:#EEF7F1}
+  .opt:disabled{cursor:default}
+  .why{border-left:3px solid var(--good);background:#F3FAF5;padding:10px 14px;margin-top:12px}
+  .hint{color:var(--ic);font-size:.9em;margin-top:6px;min-height:1.2em}
+  .row{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+  .btn{background:var(--accent);color:#fff;border:0;border-radius:4px;padding:9px 18px}
+  .btn.alt{background:#fff;color:var(--accent);border:1px solid var(--accent)}
+  .btn.quiet{background:none;color:var(--muted);border:0;text-decoration:underline;padding:9px 4px}
+  table.stats{border-collapse:collapse;margin:8px 0 4px}
+  table.stats td{padding:4px 18px 4px 0}
+  table.stats td.n{font-weight:bold;text-align:right}
+</style>
+</head>
+<body>
+<main>
+<h1>Calibration — practice</h1>
+<p class="sub">Intermediate Macroeconomics</p>
+<div id="app"></div>
+</main>
+<script>
+const STORE_KEY = "ecn313-calibration-v1";
+
+const QUESTIONS = [
+{stem:"With utility <em class='v'>u</em> = <em class='v'>c</em>&middot;&#8467; and US values for the wage, dividends and taxes, the model predicts about 4,246 hours of work a year. Average hours worked in the US data are about 1,765 a year. What does this comparison show?",
+ options:["The model predicts far more hours of work than people actually supply",
+          "The model predicts far fewer hours of work than people actually supply",
+          "The model matches the data once the numbers are rounded to the nearest thousand",
+          "The data must be mismeasured, because this utility function satisfies A1&ndash;A4"],
+ correct:0,
+ why:"4,246 hours is more than twice the observed 1,765. Satisfying A1&ndash;A4 makes the preferences reasonable in shape; it says nothing about whether the model's numbers match the data."},
+
+{stem:"What does it mean to <em>calibrate</em> a model?",
+ options:["To choose the model's parameters so that its predictions match the corresponding observations in the data",
+          "To choose which observations in the data to report so that they match the model's predictions",
+          "To choose a utility function so that the preferences it describes satisfy assumptions A1&ndash;A4",
+          "To check that the model's predictions move in the right direction after a change in policy"],
+ correct:0,
+ why:"Calibration takes the data as given and adjusts the model's parameters until its predictions reproduce the chosen observations."},
+
+{stem:"The model with <em class='v'>u</em> = <em class='v'>c</em>&middot;&#8467; cannot reproduce the hours worked observed in the data. Why does switching to <em class='v'>u</em> = <em class='v'>c</em>&middot;&#8467;<sup><em class='v'>a</em></sup> make it possible to match them?",
+ options:["The value of <em class='v'>a</em> can be chosen so the labor supply curve passes through the observed point",
+          "The new utility function satisfies A1&ndash;A4, which <em class='v'>c</em>&middot;&#8467; does not",
+          "The wage drops out of the formula for hours worked once <em class='v'>a</em> is added",
+          "The new utility function lets the model match every possible observation at once"],
+ correct:0,
+ why:"<em class='v'>c</em>&middot;&#8467; has no free parameter, so its prediction is fixed. Adding <em class='v'>a</em> gives one number that can be adjusted until predicted hours equal observed hours."},
+
+{stem:"In the utility function <em class='v'>u</em> = <em class='v'>c</em>&middot;&#8467;<sup><em class='v'>a</em></sup>, what does a higher value of <em class='v'>a</em> mean?",
+ options:["The consumer values leisure more relative to consumption",
+          "The consumer values consumption more relative to leisure",
+          "The consumer earns a higher wage for each hour worked",
+          "The consumer has more hours available to divide up"],
+ correct:0,
+ why:"<em class='v'>a</em> is the exponent on leisure, or equivalently the weight on ln&nbsp;&#8467; in ln&nbsp;<em class='v'>c</em> + <em class='v'>a</em>&nbsp;ln&nbsp;&#8467;. The wage and the time endowment are parameters of the budget constraint, not of preferences."},
+
+{stem:"With utility <em class='v'>u</em> = ln&nbsp;<em class='v'>c</em> + <em class='v'>a</em>&nbsp;ln&nbsp;&#8467; and <em class='v'>a</em> = 1, the model predicts <em>more</em> hours of work than observed in the data. To calibrate the model, which way must <em class='v'>a</em> move?",
+ options:["<em class='v'>a</em> must rise, so that the consumer values leisure more",
+          "<em class='v'>a</em> must fall, so that the consumer values leisure less",
+          "<em class='v'>a</em> must stay at 1, since only the wage affects hours",
+          "<em class='v'>a</em> can move either way, since hours do not depend on it"],
+ correct:0,
+ why:"Too much predicted work means the model's consumer does not care enough about leisure. Raising the weight on leisure makes her take more of it and work less."},
+
+{stem:"With utility <em class='v'>u</em> = ln&nbsp;<em class='v'>c</em> + <em class='v'>a</em>&nbsp;ln&nbsp;&#8467;, a model predicts <em>fewer</em> hours of work than observed in the data. To calibrate the model, which way must <em class='v'>a</em> move?",
+ options:["<em class='v'>a</em> must fall, so that the consumer values leisure less",
+          "<em class='v'>a</em> must rise, so that the consumer values leisure more",
+          "<em class='v'>a</em> must stay where it is, since only the wage affects hours",
+          "<em class='v'>a</em> can move either way, since hours do not depend on it"],
+ correct:0,
+ why:"Too little predicted work means the model's consumer values leisure too much, so the weight on leisure has to come down."},
+
+{stem:"With utility <em class='v'>u</em> = <em class='v'>b</em>&nbsp;ln&nbsp;<em class='v'>c</em> + ln&nbsp;&#8467; and <em class='v'>b</em> = 1, the model predicts more hours of work than observed. To calibrate the model, which way must <em class='v'>b</em> move?",
+ options:["<em class='v'>b</em> must fall, so that consumption matters less and working is less worthwhile",
+          "<em class='v'>b</em> must rise, so that consumption matters more and working is more worthwhile",
+          "<em class='v'>b</em> must stay at 1, since only the weight on leisure can affect hours",
+          "<em class='v'>b</em> can move either way, since it only rescales the utility level"],
+ correct:0,
+ why:"People work to earn income for consumption. Here <em class='v'>b</em> is the weight on consumption, so to make work less attractive the consumer must care less about consumption."},
+
+{stem:"Why may we solve the consumer's problem by maximizing ln(<em class='v'>c</em>&middot;&#8467;<sup><em class='v'>a</em></sup>) instead of <em class='v'>c</em>&middot;&#8467;<sup><em class='v'>a</em></sup>, subject to the same budget constraint?",
+ options:["The logarithm is increasing, so the bundle that maximizes one also maximizes the other",
+          "The logarithm always gives a larger number, so the maximum is easier to find",
+          "The two functions are equal to each other at the optimal bundle",
+          "The logarithm removes the budget constraint from the problem"],
+ correct:0,
+ why:"An increasing transformation preserves the ranking of every pair of bundles, so the best affordable bundle is the same. Taking logs just turns a product into a sum, which is easier to differentiate."},
+
+{stem:"Applying which of the following transformations to a consumer's utility function would <em>change</em> the bundle she chooses?",
+ options:["Multiplying the utility function by &minus;1",
+          "Adding 41 to the utility function",
+          "Multiplying the utility function by 5",
+          "Taking the logarithm of a positive utility function"],
+ correct:0,
+ why:"Multiplying by &minus;1 is a decreasing transformation: it reverses the ranking, so she would pick her worst bundle instead of her best. The other three are increasing and leave the choice unchanged."},
+
+{stem:"Compared with maximizing <em class='v'>c</em>&middot;&#8467;, what labor supply curve do we get by maximizing ln&nbsp;<em class='v'>c</em> + ln&nbsp;&#8467; subject to the same budget constraint?",
+ options:["Exactly the same curve, because ln&nbsp;<em class='v'>c</em> + ln&nbsp;&#8467; = ln(<em class='v'>c</em>&middot;&#8467;)",
+          "A curve with fewer hours at every wage, because logs shrink large numbers",
+          "A curve with more hours at every wage, because logs make utility concave",
+          "A vertical curve, because logs remove the effect of the wage"],
+ correct:0,
+ why:"ln&nbsp;<em class='v'>c</em> + ln&nbsp;&#8467; is the logarithm of <em class='v'>c</em>&middot;&#8467;, an increasing transformation of it, so it describes the same preferences and gives the same choices at every wage."},
+
+{stem:"You want to calibrate a utility parameter using observed hours worked, and you have already solved the model for optimal hours as a function of that parameter. What is the next step?",
+ options:["Set the model's hours equal to observed hours, with the other parameters at their data values, and solve for the parameter",
+          "Set the parameter equal to 1, compute the model's hours, and report how far they are from the data",
+          "Set the model's hours equal to half the time endowment, and solve for the parameter that delivers it",
+          "Set the wage in the model equal to observed hours, and solve for the parameter that delivers it"],
+ correct:0,
+ why:"That is the calibration recipe: solve the model for the observed variable, set it equal to the data, and solve the resulting equation for the parameter."},
+
+{stem:"In a calibrated consumer model, the lump-sum tax <em class='v'>T</em> falls while the wage stays the same. What happens to the consumer's optimal consumption and leisure?",
+ options:["Consumption rises and leisure rises",
+          "Consumption rises and leisure falls",
+          "Consumption falls and leisure rises",
+          "Consumption and leisure do not change"],
+ correct:0,
+ why:"A lower lump-sum tax at an unchanged wage is a pure positive income effect. With both goods normal, the consumer takes more of each, so she also works fewer hours."},
+
+{stem:"The graphical analysis already tells us which way consumption and leisure move after a cut in the lump-sum tax. What does a <em>calibrated</em> model add?",
+ options:["How large the changes are, in hours and in dollars",
+          "Which direction leisure moves in after the tax cut",
+          "A proof that consumption and leisure are normal goods",
+          "The shape of the indifference curves near the optimum"],
+ correct:0,
+ why:"Qualitative analysis gives directions. A model whose parameters are pinned down by data gives numbers, which is what quantitative policy analysis needs."},
+
+{stem:"After a tax cut, a consumer's utility with <em class='v'>u</em> = ln&nbsp;<em class='v'>c</em> + <em class='v'>a</em>&nbsp;ln&nbsp;&#8467; rises from 41.41 to 41.69, an increase of under 0.7%. Why is it wrong to conclude that the gain is small?",
+ options:["The same preferences are also described by <em class='v'>u</em> &minus; 41, which turns the same change into a rise from 0.41 to 0.69",
+          "Utility is measured in thousands of dollars, so an increase of 0.28 utils is actually worth about $280 a year",
+          "The percentage change should be computed from the new utility level rather than from the old one",
+          "Utility levels have to be divided by the wage before two of them can be compared with each other"],
+ correct:0,
+ why:"Subtracting a constant is an increasing transformation, so it describes the same preferences, yet it makes the same change look like a rise of about two-thirds. The size of a utility gap depends on which of many equivalent utility functions we happen to use."},
+
+{stem:"A consumer's utility function assigns a higher level to one bundle than to another. What does this comparison of the two utility levels tell us?",
+ options:["Which of the two bundles the consumer prefers",
+          "By what percentage she prefers one bundle",
+          "How many dollars the better bundle is worth",
+          "How many more hours she would work for it"],
+ correct:0,
+ why:"Utility levels rank bundles, and every increasing transformation keeps that ranking. The size of the gap between them does not survive such a transformation, so it carries no information."},
+
+{stem:"Let (<em class='v'>c</em><sub>1</sub>, &#8467;<sub>1</sub>) be a consumer's optimal bundle before a policy change and (<em class='v'>c</em><sub>2</sub>, &#8467;<sub>2</sub>) her optimal bundle after it. Which condition defines the consumption equivalent &Delta;<em class='v'>c</em> of the change?",
+ options:["<em class='v'>u</em>(<em class='v'>c</em><sub>1</sub> + &Delta;<em class='v'>c</em>, &#8467;<sub>1</sub>) = <em class='v'>u</em>(<em class='v'>c</em><sub>2</sub>, &#8467;<sub>2</sub>)",
+          "<em class='v'>u</em>(<em class='v'>c</em><sub>1</sub> + &Delta;<em class='v'>c</em>, &#8467;<sub>2</sub>) = <em class='v'>u</em>(<em class='v'>c</em><sub>2</sub>, &#8467;<sub>1</sub>)",
+          "<em class='v'>u</em>(<em class='v'>c</em><sub>1</sub>, &#8467;<sub>1</sub>) + &Delta;<em class='v'>c</em> = <em class='v'>u</em>(<em class='v'>c</em><sub>2</sub>, &#8467;<sub>2</sub>)",
+          "<em class='v'>c</em><sub>1</sub> + &Delta;<em class='v'>c</em> = <em class='v'>c</em><sub>2</sub>, with leisure held at &#8467;<sub>1</sub>"],
+ correct:0,
+ why:"&Delta;<em class='v'>c</em> is added to the original consumption, with leisure kept at its original level, until the consumer is exactly as well off as after the change. Adding &Delta;<em class='v'>c</em> to utility itself would mix dollars with utils."},
+
+{stem:"What does the consumption equivalent of a tax cut measure?",
+ options:["The extra consumption that, with leisure unchanged, would leave the consumer as well off as the tax cut does",
+          "The change in the consumer's consumption that the tax cut itself causes, with her leisure left to adjust",
+          "The change in the consumer's utility that the tax cut causes, measured in utils of her utility function",
+          "The tax revenue that the government gives up when it cuts the tax, measured in dollars per consumer"],
+ correct:0,
+ why:"It is a hypothetical: how much consumption we would have to hand the consumer in the original situation to make her indifferent to the tax cut. It is not the actual change in consumption, which ignores the gain in leisure."},
+
+{stem:"Why is the consumption equivalent a better measure of a welfare gain than the change in the utility level?",
+ options:["It is in units of consumption, and it is the same for every utility function that describes the same preferences",
+          "It is always larger than the change in utility, so it makes the effects of a policy easier to see",
+          "It leaves out the change in leisure, which is harder to value than the change in consumption",
+          "It can be computed without knowing the consumer's utility function or her preferences at all"],
+ correct:0,
+ why:"The consumption equivalent is defined by indifference, an equality of utility, which every increasing transformation of the utility function preserves. So it does not depend on which equivalent utility function we use, and it comes in units people understand."},
+
+{stem:"After a cut in the lump-sum tax, a consumer's consumption rises by 6.4%, but the consumption equivalent of the tax cut is 32% of her original consumption. What accounts for the difference?",
+ options:["She also takes more leisure, which she values as well",
+          "Utility levels were rounded before the comparison",
+          "The wage rises because she works fewer hours",
+          "The government returns part of the tax revenue"],
+ correct:0,
+ why:"The consumption equivalent holds leisure at its original level, so it must make up for the extra leisure as well as the extra consumption. Most of the gain here comes through leisure."},
+
+{stem:"A fall in dividends has a consumption equivalent of &minus;6.4% of the consumer's original consumption. What does the minus sign mean?",
+ options:["She is worse off: removing 6.4% of her original consumption, with leisure unchanged, would leave her as badly off",
+          "She is better off: adding 6.4% to her original consumption, with leisure unchanged, would leave her as well off",
+          "Her actual consumption falls by exactly 6.4% after the change, and her leisure stays at its original level",
+          "Her utility level falls by exactly 6.4% after the change, whichever utility function is used to measure it"],
+ correct:0,
+ why:"A negative &Delta;<em class='v'>c</em> means consumption would have to be taken away in the original situation to match her welfare after the change, so the change makes her worse off."},
+
+{stem:"Two different models are each calibrated to the same observed wage and the same observed hours worked. Which statement about them is true?",
+ options:["They agree at the observed wage but can predict very different responses to a change",
+          "They must predict the same response to any change in the wage or in taxes",
+          "They must have the same utility function, possibly with different parameter names",
+          "At least one of them must violate one of the assumptions A1&ndash;A4"],
+ correct:0,
+ why:"Calibrating to one data point fixes where the labor supply curve passes, not how steep it is there. Predictions about changes depend on that response, so they can differ widely."}
+];
+
+
+/* ---------------------------------------------------------------- engine */
+const app = document.getElementById("app");
+
+function loadLearned(){
+  try{ const raw = localStorage.getItem(STORE_KEY);
+       if(!raw) return null;
+       const obj = JSON.parse(raw);
+       return Array.isArray(obj.learned) ? new Set(obj.learned.filter(i => i < QUESTIONS.length)) : null;
+  }catch(e){ return null; }
+}
+function saveLearned(set){
+  try{ localStorage.setItem(STORE_KEY, JSON.stringify({learned:[...set], saved:Date.now()})); return true; }
+  catch(e){ return false; }
+}
+function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+function el(tag, cls, html){ const e=document.createElement(tag); if(cls) e.className=cls; if(html!==undefined) e.innerHTML=html; return e; }
+
+let S = null;   // session state
+
+function start(indices){
+  S = { queue:[...indices], seen:new Set(), missed:new Set(), firstRight:new Set(),
+        learnedAfterMiss:new Set(), cleanThisSession:new Set(), total:indices.length };
+  next();
+}
+
+function welcome(){
+  app.innerHTML = "";
+  const prev = loadLearned();
+  const c = el("div","card");
+  if(prev && prev.size > 0){
+    const left = QUESTIONS.map((_,i)=>i).filter(i => !prev.has(i));
+    c.appendChild(el("p","", "Welcome back. On this device you have learned <b>" + prev.size +
+      "</b> of the " + QUESTIONS.length + " questions."));
+    const r = el("div","row");
+    const b1 = el("button","btn","Practise all questions"); b1.onclick = () => start(QUESTIONS.map((_,i)=>i));
+    r.appendChild(b1);
+    if(left.length > 0){
+      const b2 = el("button","btn alt","Only the " + left.length + " not yet learned"); b2.onclick = () => start(left);
+      r.appendChild(b2);
+    }
+    c.appendChild(r);
+  } else {
+    c.appendChild(el("p","", QUESTIONS.length + " questions. Answer each one; a question you miss comes back later " +
+      "and must be answered cleanly. Nothing is graded or recorded anywhere."));
+    const r = el("div","row");
+    const b = el("button","btn","Start"); b.onclick = () => start(QUESTIONS.map((_,i)=>i));
+    r.appendChild(b); c.appendChild(r);
+  }
+  app.appendChild(c);
+}
+
+function next(){
+  if(S.queue.length === 0){ finish(); return; }
+  const qi = S.queue.shift();
+  show(qi);
+}
+
+function show(qi){
+  const q = QUESTIONS[qi];
+  const firstShowing = !S.seen.has(qi);
+  S.seen.add(qi);
+  let missedNow = false;
+  app.innerHTML = "";
+  const c = el("div","card");
+  const meta = el("div","meta");
+  meta.appendChild(el("span","", (S.queue.length + 1) + " left in this session" + (firstShowing ? "" : " &middot; back for a clean answer")));
+  const end = el("button","btn quiet","End session"); end.onclick = finish;
+  meta.appendChild(end);
+  c.appendChild(meta);
+  c.appendChild(el("p","stem", q.stem));
+  const order = shuffle(q.options.map((_,i)=>i));
+  const buttons = [];
+  const hint = el("div","hint");
+  order.forEach(oi => {
+    const b = el("button","opt", q.options[oi]);
+    b.onclick = () => {
+      if(oi === q.correct){
+        b.classList.add("right");
+        buttons.forEach(x => x.disabled = true);
+        hint.textContent = "";
+        if(!missedNow){
+          S.cleanThisSession.add(qi);
+          if(firstShowing && !S.missed.has(qi)) S.firstRight.add(qi);
+          else S.learnedAfterMiss.add(qi);
+        } else {
+          S.missed.add(qi);
+          S.queue.push(qi);          // back of the queue, to be answered cleanly later
+        }
+        c.appendChild(el("div","why", q.why));
+        const r = el("div","row");
+        const nb = el("button","btn", S.queue.length ? "Next question" : "Finish");
+        nb.onclick = next; r.appendChild(nb); c.appendChild(r);
+        nb.focus();
+      } else {
+        missedNow = true;
+        b.classList.add("wrong"); b.disabled = true;
+        hint.textContent = "Not that one — try again.";
+      }
+    };
+    buttons.push(b); c.appendChild(b);
+  });
+  c.appendChild(hint);
+  app.appendChild(c);
+}
+
+function finish(){
+  app.innerHTML = "";
+  const c = el("div","card");
+  c.appendChild(el("p","", "<b>Session finished.</b>"));
+  const t = el("table","stats");
+  t.innerHTML =
+    "<tr><td>Questions attempted</td><td class='n'>" + S.seen.size + "</td></tr>" +
+    "<tr><td>Right at the first attempt</td><td class='n'>" + S.firstRight.size + "</td></tr>" +
+    "<tr><td>Learned after an initial miss</td><td class='n'>" + S.learnedAfterMiss.size + "</td></tr>";
+  c.appendChild(t);
+  if(S.cleanThisSession.size > 0){
+    c.appendChild(el("p","", "Save your progress on this device? Only which questions you answered " +
+      "correctly at the first attempt is stored, in this browser, and nobody else can see it."));
+    const r = el("div","row");
+    const yes = el("button","btn","Save progress");
+    const no  = el("button","btn alt","Don't save");
+    yes.onclick = () => {
+      const prev = loadLearned() || new Set();
+      S.cleanThisSession.forEach(i => prev.add(i));
+      const ok = saveLearned(prev);
+      r.innerHTML = ""; r.appendChild(el("span","", ok ? "Saved." : "This browser would not let the page save."));
+      r.appendChild(again());
+    };
+    no.onclick = () => { r.innerHTML = ""; r.appendChild(again()); };
+    r.appendChild(yes); r.appendChild(no); c.appendChild(r);
+  } else {
+    const r = el("div","row"); r.appendChild(again()); c.appendChild(r);
+  }
+  app.appendChild(c);
+}
+function again(){ const b = el("button","btn quiet","Start again"); b.onclick = welcome; return b; }
+
+welcome();
+</script>
+</body>
+</html>
