@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Intermediate Macroeconomics — Labor demand practice</title>
+<style>
+  :root{
+    --ink:#1A1A1C; --accent:#1F3A6E; --budget:#15607A; --ic:#B21F35;
+    --note:#8A6212; --muted:#6B6E76; --rule:#D8DCE3; --paper:#FDFCFA;
+    --panel:#FFFFFF;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--paper); color:var(--ink);
+    font-family:"Palatino Linotype",Palatino,"Book Antiqua","URW Palladio L",
+                Georgia,serif;
+    line-height:1.5; padding:1.5rem 1rem 4rem;
+  }
+  .wrap{max-width:46rem;margin:0 auto}
+  header{border-top:3px solid var(--accent);padding-top:.9rem;margin-bottom:1.6rem}
+  h1{font-size:1.5rem;margin:0 0 .2rem;color:var(--accent);letter-spacing:.01em}
+  .sub{color:var(--muted);font-style:italic;font-size:.95rem;margin:0}
+  .card{
+    background:var(--panel);border:1px solid var(--rule);border-left:4px solid var(--accent);
+    padding:1.2rem 1.3rem;margin-bottom:1.1rem;
+  }
+  .stem{font-size:1.06rem;margin:0 0 1rem}
+  .qmeta{color:var(--muted);font-size:.82rem;letter-spacing:.04em;
+         text-transform:uppercase;margin:0 0 .5rem}
+  ul.options{list-style:none;margin:0;padding:0}
+  ul.options li{margin:0 0 .5rem}
+  button.opt{
+    width:100%;text-align:left;font:inherit;font-size:1rem;
+    background:#fff;border:1px solid var(--rule);border-radius:2px;
+    padding:.62rem .8rem;cursor:pointer;color:var(--ink);
+    display:flex;gap:.6rem;align-items:baseline;
+  }
+  button.opt:hover:not(:disabled){border-color:var(--budget);background:#F4F9FB}
+  button.opt:disabled{cursor:default}
+  button.opt .tag{color:var(--muted);font-variant:small-caps;min-width:1.2rem}
+  button.opt.wrong{background:#FBF1F2;border-color:var(--ic);color:#8B4148;
+                   text-decoration:line-through;text-decoration-thickness:1px}
+  button.opt.right{background:#EFF6F8;border-color:var(--budget);color:var(--budget);
+                   font-weight:600}
+  .verdict{margin:1rem 0 0;padding:.7rem .85rem;font-size:.97rem;border-left:3px solid}
+  .verdict.ok{border-color:var(--budget);background:#EFF6F8}
+  .verdict.no{border-color:var(--ic);background:#FBF1F2}
+  .verdict b{display:block;margin-bottom:.15rem}
+  .btn{
+    font:inherit;font-size:1rem;padding:.62rem 1.15rem;border-radius:2px;
+    border:1px solid var(--accent);background:var(--accent);color:#fff;cursor:pointer;
+  }
+  .btn:hover{background:#162C55}
+  .btn.ghost{background:#fff;color:var(--accent)}
+  .btn.ghost:hover{background:#F2F5FA}
+  .btn.quiet{background:#fff;color:var(--muted);border-color:var(--rule)}
+  .btn.quiet:hover{background:#F6F6F4;color:var(--ink)}
+  .row{display:flex;gap:.6rem;flex-wrap:wrap;align-items:center;margin-top:1.1rem}
+  .spacer{flex:1}
+  .bar{height:4px;background:var(--rule);margin:.3rem 0 1.4rem;overflow:hidden}
+  .bar > div{height:100%;background:var(--budget);width:0;transition:width .25s}
+  table.stats{border-collapse:collapse;width:100%;margin:.4rem 0 .2rem}
+  table.stats td{padding:.42rem .2rem;border-bottom:1px solid var(--rule);font-size:1rem}
+  table.stats td.n{text-align:right;font-weight:700;color:var(--accent);width:3.5rem}
+  table.stats tr:last-child td{border-bottom:none}
+  .note{color:var(--muted);font-size:.9rem}
+  em.v{font-style:italic}
+  footer{margin-top:2.2rem;color:var(--muted);font-size:.82rem;
+         border-top:1px solid var(--rule);padding-top:.7rem}
+  @media (max-width:480px){ body{padding:1rem .7rem 3rem} h1{font-size:1.3rem} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>Labor demand curve — practice</h1>
+  <p class="sub">Intermediate Macroeconomics</p>
+</header>
+
+<div id="app"></div>
+
+<footer>Your progress is saved in this browser, on this device only.
+   Nothing is sent anywhere. Not graded.</footer>
+
+</div>
+
+<script>
+/* ---- the four things that change from quiz to quiz: title, h1, key, questions ---- */
+const STORE_KEY = "ecn313-labor-demand-v1";
+
+const QUESTIONS = [
+{stem:"A firm chooses its hours <em class='v'>N</em> to maximise profit, with revenue <em class='v'>z F</em>(<em class='v'>K</em>, <em class='v'>N</em>) and cost <em class='v'>wN</em>. Which condition characterises its optimal choice of hours?",
+ options:["The slope of the revenue curve equals the slope of the cost line",
+          "Revenue equals cost, so that profit is exactly zero",
+          "The revenue curve is at its highest point, where its slope is zero",
+          "The wage bill <em class='v'>wN</em> is as large as it can be"],
+ correct:0,
+ why:"Profit is the vertical gap between the revenue curve and the cost line, and it is largest where the two are parallel: MP<sub><em class='v'>N</em></sub> = <em class='v'>w</em>. One more hour then adds exactly as much revenue as it costs."},
+
+{stem:"On a diagram with a firm's revenue curve and its cost line, both plotted against hours, what does profit at a given number of hours correspond to?",
+ options:["The vertical gap between the revenue curve and the cost line",
+          "The slope of the revenue curve minus the slope of the cost line",
+          "The area between the revenue curve and the hours axis",
+          "The horizontal distance between the revenue curve and the cost line"],
+ correct:0,
+ why:"Revenue and cost are both measured on the vertical axis, so profit, their difference, is a vertical distance. Choosing hours to maximise profit means finding where that gap is largest."},
+
+{stem:"Which statement describes <b>monotonicity in labor</b> for a production technology <em class='v'>F</em>(<em class='v'>K</em>, <em class='v'>N</em>)?",
+ options:["MP<sub><em class='v'>N</em></sub> is positive, so the revenue curve slopes upward",
+          "MP<sub><em class='v'>N</em></sub> falls as <em class='v'>N</em> rises, so the revenue curve gets flatter",
+          "MP<sub><em class='v'>N</em></sub> rises as <em class='v'>K</em> rises, so more capital makes the revenue curve steeper",
+          "MP<sub><em class='v'>N</em></sub> is zero at the profit-maximising hours"],
+ correct:0,
+ why:"Monotonicity says more labor never lowers output: the marginal product is positive and the revenue curve rises. The other statements describe diminishing returns and complementarity, which are separate properties."},
+
+{stem:"Which statement describes <b>diminishing returns to labor</b> for a production technology <em class='v'>F</em>(<em class='v'>K</em>, <em class='v'>N</em>)?",
+ options:["MP<sub><em class='v'>N</em></sub> falls as <em class='v'>N</em> rises, so the revenue curve gets flatter as hours increase",
+          "MP<sub><em class='v'>N</em></sub> is positive at every <em class='v'>N</em>, so the revenue curve slopes upward",
+          "MP<sub><em class='v'>N</em></sub> rises as <em class='v'>K</em> rises, so more capital makes the revenue curve steeper",
+          "MP<sub><em class='v'>N</em></sub> is constant at every <em class='v'>N</em>, so the revenue curve is a straight line"],
+ correct:0,
+ why:"Each extra hour adds less revenue than the one before: the slope of the revenue curve falls as hours rise. This is the property that makes the firm's adjustments in this class work."},
+
+{stem:"Which statement describes <b>complementarity between labor and capital</b> for a production technology <em class='v'>F</em>(<em class='v'>K</em>, <em class='v'>N</em>)?",
+ options:["MP<sub><em class='v'>N</em></sub> rises when <em class='v'>K</em> rises, so more capital makes the revenue curve steeper at every <em class='v'>N</em>",
+          "MP<sub><em class='v'>N</em></sub> falls when <em class='v'>K</em> rises, because capital takes over work that labor did",
+          "MP<sub><em class='v'>N</em></sub> falls as <em class='v'>N</em> rises, so the revenue curve gets flatter as hours increase",
+          "MP<sub><em class='v'>N</em></sub> is positive at every <em class='v'>N</em>, so the revenue curve slopes upward"],
+ correct:0,
+ why:"Complementarity means capital makes labor more productive at the margin. The opposite case, where capital replaces labor, is a different technology."},
+
+{stem:"A firm has chosen its profit-maximising hours. The wage then rises, and the firm leaves its hours unchanged. How does the marginal revenue of the last hour compare with its marginal cost?",
+ options:["Below it: the last hour now costs more than it brings in",
+          "Above it: the last hour now brings in more than it costs",
+          "Equal to it, since the old choice of hours was optimal",
+          "Above it, because a higher wage raises the revenue earned per hour"],
+ correct:0,
+ why:"The revenue curve has not moved, so MP<sub><em class='v'>N</em></sub> at the old hours is still the old wage. The cost line is steeper, so marginal cost, the new wage, is higher. The old choice stopped being optimal when the wage changed."},
+
+{stem:"The wage rises, and the firm's marginal revenue at its old hours is now below its marginal cost. Which change in hours restores the optimality condition, and why?",
+ options:["Fewer hours: MP<sub><em class='v'>N</em></sub> is decreasing in <em class='v'>N</em>, so cutting hours raises it toward the new wage",
+          "More hours: the firm needs more output to cover the higher wage bill it now faces",
+          "More hours: MP<sub><em class='v'>N</em></sub> is decreasing in <em class='v'>N</em>, so adding hours raises it toward the new wage",
+          "No change in hours: MP<sub><em class='v'>N</em></sub> does not depend on the wage, so the old hours stay optimal"],
+ correct:0,
+ why:"The firm needs MP<sub><em class='v'>N</em></sub> to rise until it equals the higher wage. With diminishing returns the marginal product is higher at fewer hours, so the only way up is to cut hours."},
+
+{stem:"Which property of the production technology makes the labor demand curve slope downward?",
+ options:["Diminishing returns to labor",
+          "Monotonicity in labor",
+          "Complementarity between labor and capital",
+          "None of them: it follows from maximising profit alone"],
+ correct:0,
+ why:"A higher wage requires a higher MP<sub><em class='v'>N</em></sub>, and only diminishing returns turn that into fewer hours. Without it, cutting hours would not raise the marginal product."},
+
+{stem:"What does a point (<em class='v'>w</em>, <em class='v'>N</em>) on a firm's labor demand curve tell you?",
+ options:["<em class='v'>N</em> is the hours the firm chooses to hire when the wage is <em class='v'>w</em>",
+          "<em class='v'>N</em> is the hours at which the firm earns zero profit when the wage is <em class='v'>w</em>",
+          "<em class='v'>N</em> is the hours that workers are willing to supply when the wage is <em class='v'>w</em>",
+          "<em class='v'>N</em> is the hours that maximise the firm's output when the wage is <em class='v'>w</em>"],
+ correct:0,
+ why:"Each point of the curve is one run of the firm's problem: fix the wage, find the profit-maximising hours. The supply side of the labor market is a different curve, drawn from the consumer's problem."},
+
+{stem:"Which of these changes moves a firm <em>along</em> its labor demand curve, rather than shifting the curve?",
+ options:["A change in the wage",
+          "A change in the capital stock",
+          "A change in the payroll tax rate",
+          "A change in the size of a lump-sum tax on the firm"],
+ correct:0,
+ why:"The wage is on the vertical axis, so changing it just picks a different point of its own curve. A change in capital or in the payroll tax alters the firm's problem at a given wage and shifts the curve. A lump-sum tax does neither."},
+
+{stem:"With the wage held fixed, a change in the environment leaves a firm's marginal revenue above its marginal cost at its old hours. Which way does the point on the labor demand curve move?",
+ options:["To the right: more hours lower MP<sub><em class='v'>N</em></sub> until it equals marginal cost",
+          "To the left: fewer hours lower MP<sub><em class='v'>N</em></sub> until it equals marginal cost",
+          "Upward: the wage must rise to match the higher marginal revenue",
+          "It does not move: the wage is fixed, so hours cannot change"],
+ correct:0,
+ why:"Marginal revenue above marginal cost means the last hour is profitable, so the firm hires more. Diminishing returns bring MP<sub><em class='v'>N</em></sub> down as hours rise, until it equals marginal cost. The wage does not move, so the point moves horizontally."},
+
+{stem:"When we work out the direction of a shift of the labor demand curve, why do we hold the wage fixed?",
+ options:["A shift is the change in the hours the firm chooses at each given wage",
+          "The wage is determined outside the model and can never change",
+          "The wage does not enter the firm's profit, so it does not matter",
+          "A change in the wage would also move the revenue curve, mixing two effects"],
+ correct:0,
+ why:"Comparing hours at one wage, before and after the change, is exactly what a shift is. If the wage moved too, we would be mixing a shift with a movement along the curve."},
+
+{stem:"A firm's capital stock rises, and its technology has complementarity between labor and capital. At a given wage, what happens to its labor demand curve?",
+ options:["It shifts to the right: the firm hires more hours at each wage",
+          "It shifts to the left: capital replaces some of the hours the firm hires",
+          "It does not shift: the wage has not changed",
+          "It does not shift: capital changes revenue but not marginal revenue"],
+ correct:0,
+ why:"More capital raises MP<sub><em class='v'>N</em></sub> at every number of hours, so at the old hours marginal revenue exceeds the wage. With diminishing returns the firm hires more hours until the two are equal once more."},
+
+{stem:"A firm's technology is such that MP<sub><em class='v'>N</em></sub> does not depend on its capital <em class='v'>K</em>. Capital rises. What happens to its labor demand curve?",
+ options:["It does not shift: at each wage the optimal hours are unchanged",
+          "It shifts to the right, because more capital raises the firm's output",
+          "It shifts to the left, because capital replaces labor",
+          "It slopes upward: without complementarity a higher wage calls for more hours"],
+ correct:0,
+ why:"The optimality condition is MP<sub><em class='v'>N</em></sub> = <em class='v'>w</em>. If MP<sub><em class='v'>N</em></sub> does not depend on <em class='v'>K</em>, changing <em class='v'>K</em> leaves the condition and the optimal hours untouched. Without complementarity there is nothing to shift the curve."},
+
+{stem:"In the argument that more capital shifts the labor demand curve to the right, which properties of the technology does the conclusion rely on?",
+ options:["Complementarity, to see that MP<sub><em class='v'>N</em></sub> rises, and diminishing returns, to see that hours must rise",
+          "Monotonicity, to see that MP<sub><em class='v'>N</em></sub> rises, and diminishing returns, to see that hours must rise",
+          "Complementarity, to see that MP<sub><em class='v'>N</em></sub> rises, and monotonicity, to see that hours must rise",
+          "Complementarity alone, since it makes MP<sub><em class='v'>N</em></sub> rise and so settles the direction"],
+ correct:0,
+ why:"Complementarity tells us the extra capital raises marginal revenue at the old hours. Diminishing returns tell us that hiring more hours is what brings it back down to the wage. Without the second step, the direction would not follow."},
+
+{stem:"A payroll tax at rate <em class='v'>t</em> is paid by the firm on its wage bill. What happens to the cost line in the firm's decision problem?",
+ options:["It gets steeper: its slope rises from <em class='v'>w</em> to (1 + <em class='v'>t</em>)<em class='v'>w</em>",
+          "It shifts up in parallel and keeps the slope <em class='v'>w</em>",
+          "It gets flatter: its slope falls to (1 &minus; <em class='v'>t</em>)<em class='v'>w</em>",
+          "It does not change: the tax is paid to the government, not to workers"],
+ correct:0,
+ why:"For every unit of wage bill the firm also pays <em class='v'>t</em> times as much to the government, so each hour costs (1 + <em class='v'>t</em>)<em class='v'>w</em>. The cost is still proportional to hours, so the line stays straight but steeper."},
+
+{stem:"A payroll tax at rate <em class='v'>t</em> is introduced on a firm's wage bill. What happens to its labor demand curve?",
+ options:["It shifts to the left: the firm hires fewer hours at each wage",
+          "It shifts to the right: the firm hires more hours to pay the tax",
+          "It does not shift: the tax does not change the wage that workers receive",
+          "The firm moves along its curve to a lower wage"],
+ correct:0,
+ why:"The tax raises the marginal cost of an hour, so at the old hours marginal revenue is below marginal cost and the firm cuts hours. It does so at every wage."},
+
+{stem:"Why does a payroll tax on a firm shift its labor demand curve, instead of moving the firm along it?",
+ options:["The axis shows the wage paid to the worker, while the firm's cost per hour is (1 + <em class='v'>t</em>) times that wage",
+          "The tax changes the wage that the worker receives, so the firm moves to another point",
+          "The tax moves the firm's revenue curve down, so less labor is worth hiring",
+          "The tax changes the number of workers available to the firm at each wage"],
+ correct:0,
+ why:"The curve is drawn against the wage paid to the worker. At each such wage the tax makes an hour more expensive for the firm, so the hours it demands change at every point: the whole curve shifts."},
+
+{stem:"The government introduces a lump-sum tax on a firm, a fixed amount that does not depend on the hours it hires. What happens to the cost line in the firm's decision problem?",
+ options:["It shifts up in parallel and keeps its slope",
+          "It gets steeper, because the firm pays more in total",
+          "It gets flatter, because the tax is spread over more hours",
+          "It shifts down in parallel and keeps its slope"],
+ correct:0,
+ why:"The tax adds a constant amount whatever the hours, so total cost is the wage bill plus a constant: a line with an unchanged slope, higher up. The slope is the marginal cost, and it has not changed."},
+
+{stem:"The government introduces a lump-sum tax on a firm, a fixed amount that does not depend on the hours it hires. What happens to the firm's labor demand curve?",
+ options:["It does not shift: neither marginal revenue nor marginal cost changes",
+          "It shifts to the left: profit falls, so the firm hires fewer hours",
+          "It shifts to the left: the firm must cut its wage bill to pay the tax",
+          "It shifts to the right: the firm hires more hours to make up for the tax"],
+ correct:0,
+ why:"The optimality condition compares the slopes of the revenue curve and the cost line, and the tax changes neither. Profit is lower, but the hours that maximise it have not moved, so every wage still gives its old hours."}
+];
+
+/* ---- engine ---- */
+(function(){
+  const app = document.getElementById("app");
+  const N = QUESTIONS.length;
+  const LETTERS = ["A","B","C","D","E","F"];
+
+  function load(){
+    try{ const s = JSON.parse(localStorage.getItem(STORE_KEY)||"null");
+         if(s && Array.isArray(s.learned)) return new Set(s.learned); }catch(e){}
+    return new Set();
+  }
+  function save(set){
+    try{ localStorage.setItem(STORE_KEY, JSON.stringify({learned:[...set]})); return true; }
+    catch(e){ return false; }
+  }
+  function shuffle(a){
+    const b = a.slice();
+    for(let i=b.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [b[i],b[j]]=[b[j],b[i]]; }
+    return b;
+  }
+
+  let saved = load();
+  let queue, firstSeen, firstRight, learnedNow, attempted, total;
+
+  function start(onlyNew){
+    const idx = QUESTIONS.map((_,i)=>i).filter(i=>!onlyNew || !saved.has(i));
+    queue = idx.slice();
+    total = idx.length;
+    firstSeen = new Set(); firstRight = new Set(); learnedNow = new Set(); attempted = new Set();
+    next();
+  }
+
+  function welcome(){
+    saved = load();
+    const k = saved.size;
+    let h = "<div class='card'><p class='stem'>"+N+" short questions on the labor demand curve. Get one right first time and it is done; miss it and it comes back later in the session. Not graded.</p>";
+    if(k>0){
+      h += "<p class='note'>On this device you have already learned "+k+" of "+N+".</p>"
+         + "<div class='row'><button class='btn' id='b-new'"+(k>=N?" disabled":"")+">Only the ones not yet learned</button>"
+         + "<button class='btn ghost' id='b-all'>All questions</button>"
+         + "<span class='spacer'></span><button class='btn quiet' id='b-reset'>Forget my progress</button></div>";
+    } else {
+      h += "<div class='row'><button class='btn' id='b-all'>Start</button></div>";
+    }
+    h += "</div>";
+    app.innerHTML = h;
+    const a=document.getElementById("b-all"), n=document.getElementById("b-new"), r=document.getElementById("b-reset");
+    if(a) a.onclick=()=>start(false);
+    if(n) n.onclick=()=>start(true);
+    if(r) r.onclick=()=>{ try{localStorage.removeItem(STORE_KEY);}catch(e){} welcome(); };
+  }
+
+  function next(){
+    if(queue.length===0){ return finish(); }
+    const qi = queue[0];
+    const q = QUESTIONS[qi];
+    attempted.add(qi);
+    const order = shuffle(q.options.map((_,i)=>i));
+    const struck = new Set();
+    let missedHere = false, done = false;
+
+    const doneCount = total - new Set(queue).size;
+    let h = "<div class='bar'><div style='width:"+Math.round(100*doneCount/Math.max(total,1))+"%'></div></div>";
+    h += "<div class='card'><p class='qmeta'>Question "+(QUESTIONS.indexOf(q)+1)+" of "+N+"</p>";
+    h += "<p class='stem'>"+q.stem+"</p><ul class='options'>";
+    order.forEach((oi,pos)=>{
+      h += "<li><button class='opt' data-oi='"+oi+"'><span class='tag'>"+LETTERS[pos]+"</span><span>"+q.options[oi]+"</span></button></li>";
+    });
+    h += "</ul><div id='fb'></div><div class='row' id='ctl'><span class='spacer'></span><button class='btn quiet' id='b-end'>End session</button></div></div>";
+    app.innerHTML = h;
+
+    document.getElementById("b-end").onclick = finish;
+    const btns = app.querySelectorAll("button.opt");
+    btns.forEach(b=>{
+      b.onclick = ()=>{
+        if(done) return;
+        const oi = +b.dataset.oi;
+        if(oi===q.correct){
+          done = true;
+          b.classList.add("right");
+          btns.forEach(x=>{ x.disabled=true; });
+          const first = !firstSeen.has(qi);
+          firstSeen.add(qi);
+          let ok;
+          if(!missedHere){
+            // right at this showing's first attempt
+            if(first){ firstRight.add(qi); }
+            else { learnedNow.add(qi); }
+            saved.add(qi);
+            queue.shift();
+            ok = true;
+          } else {
+            if(first){ /* missed at the very first attempt */ }
+            queue.shift(); queue.push(qi);
+            ok = false;
+          }
+          document.getElementById("fb").innerHTML =
+            "<div class='verdict "+(ok?"ok":"no")+"'><b>"+(ok?"Correct.":"Now you have it.")+"</b>"+q.why+(ok?"":" This one will come back later.")+"</div>";
+          document.getElementById("ctl").innerHTML =
+            "<button class='btn' id='b-next'>"+(queue.length?"Next":"Finish")+"</button><span class='spacer'></span><button class='btn quiet' id='b-end2'>End session</button>";
+          document.getElementById("b-next").onclick = next;
+          document.getElementById("b-end2").onclick = finish;
+          document.getElementById("b-next").focus();
+        } else {
+          if(!firstSeen.has(qi)){ firstSeen.add(qi); }
+          missedHere = true;
+          b.classList.add("wrong"); b.disabled = true; struck.add(oi);
+        }
+      };
+    });
+  }
+
+  function finish(){
+    const att = attempted.size;
+    const fr = firstRight.size;
+    const ln = learnedNow.size;
+    let h = "<div class='card'><p class='stem'>Session finished.</p><table class='stats'>"
+      + "<tr><td>Questions attempted</td><td class='n'>"+att+"</td></tr>"
+      + "<tr><td>Right at the first attempt</td><td class='n'>"+fr+"</td></tr>"
+      + "<tr><td>Learned after an initial miss</td><td class='n'>"+ln+"</td></tr></table>"
+      + "<p class='note'>Save your progress on this device, so that next time you can practise only the questions you have not learned yet?</p>"
+      + "<div class='row'><button class='btn' id='b-save'>Save progress</button>"
+      + "<button class='btn ghost' id='b-nosave'>Don't save</button></div><div id='sv'></div></div>";
+    app.innerHTML = h;
+    document.getElementById("b-save").onclick = ()=>{
+      const ok = save(saved);
+      document.getElementById("sv").innerHTML = "<div class='verdict "+(ok?"ok":"no")+"'>"+(ok?"Saved.":"This browser would not let the page save anything.")+"</div>";
+      setTimeout(welcome, 900);
+    };
+    document.getElementById("b-nosave").onclick = ()=>{ saved = load(); welcome(); };
+  }
+
+  welcome();
+})();
+</script>
+</body>
+</html>
