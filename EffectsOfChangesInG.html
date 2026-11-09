@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Intermediate Macroeconomics — Effects of changes in G practice</title>
+<style>
+  :root{
+    --ink:#1A1A1C; --accent:#1F3A6E; --budget:#15607A; --ic:#B21F35;
+    --note:#8A6212; --muted:#6B6E76; --rule:#D8DCE3; --paper:#FDFCFA;
+    --panel:#FFFFFF;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--paper); color:var(--ink);
+    font-family:"Palatino Linotype",Palatino,"Book Antiqua","URW Palladio L",
+                Georgia,serif;
+    line-height:1.5; padding:1.5rem 1rem 4rem;
+  }
+  .wrap{max-width:46rem;margin:0 auto}
+  header{border-top:3px solid var(--accent);padding-top:.9rem;margin-bottom:1.6rem}
+  h1{font-size:1.5rem;margin:0 0 .2rem;color:var(--accent);letter-spacing:.01em}
+  .sub{color:var(--muted);font-style:italic;font-size:.95rem;margin:0}
+  .card{
+    background:var(--panel);border:1px solid var(--rule);border-left:4px solid var(--accent);
+    padding:1.2rem 1.3rem;margin-bottom:1.1rem;
+  }
+  .stem{font-size:1.06rem;margin:0 0 1rem}
+  .qmeta{color:var(--muted);font-size:.82rem;letter-spacing:.04em;
+         text-transform:uppercase;margin:0 0 .5rem}
+  ul.options{list-style:none;margin:0;padding:0}
+  ul.options li{margin:0 0 .5rem}
+  button.opt{
+    width:100%;text-align:left;font:inherit;font-size:1rem;
+    background:#fff;border:1px solid var(--rule);border-radius:2px;
+    padding:.62rem .8rem;cursor:pointer;color:var(--ink);
+    display:flex;gap:.6rem;align-items:baseline;
+  }
+  button.opt:hover:not(:disabled){border-color:var(--budget);background:#F4F9FB}
+  button.opt:disabled{cursor:default}
+  button.opt .tag{color:var(--muted);font-variant:small-caps;min-width:1.2rem}
+  button.opt.wrong{background:#FBF1F2;border-color:var(--ic);color:#8B4148;
+                   text-decoration:line-through;text-decoration-thickness:1px}
+  button.opt.right{background:#EFF6F8;border-color:var(--budget);color:var(--budget);
+                   font-weight:600}
+  .verdict{margin:1rem 0 0;padding:.7rem .85rem;font-size:.97rem;border-left:3px solid}
+  .verdict.ok{border-color:var(--budget);background:#EFF6F8}
+  .verdict.no{border-color:var(--ic);background:#FBF1F2}
+  .verdict b{display:block;margin-bottom:.15rem}
+  .btn{
+    font:inherit;font-size:1rem;padding:.62rem 1.15rem;border-radius:2px;
+    border:1px solid var(--accent);background:var(--accent);color:#fff;cursor:pointer;
+  }
+  .btn:hover{background:#162C55}
+  .btn.ghost{background:#fff;color:var(--accent)}
+  .btn.ghost:hover{background:#F2F5FA}
+  .btn.quiet{background:#fff;color:var(--muted);border-color:var(--rule)}
+  .btn.quiet:hover{background:#F6F6F4;color:var(--ink)}
+  .row{display:flex;gap:.6rem;flex-wrap:wrap;align-items:center;margin-top:1.1rem}
+  .spacer{flex:1}
+  .bar{height:4px;background:var(--rule);margin:.3rem 0 1.4rem;overflow:hidden}
+  .bar > div{height:100%;background:var(--budget);width:0;transition:width .25s}
+  table.stats{border-collapse:collapse;width:100%;margin:.4rem 0 .2rem}
+  table.stats td{padding:.42rem .2rem;border-bottom:1px solid var(--rule);font-size:1rem}
+  table.stats td.n{text-align:right;font-weight:700;color:var(--accent);width:3.5rem}
+  table.stats tr:last-child td{border-bottom:none}
+  .note{color:var(--muted);font-size:.9rem}
+  em.v{font-style:italic}
+  footer{margin-top:2.2rem;color:var(--muted);font-size:.82rem;
+         border-top:1px solid var(--rule);padding-top:.7rem}
+  footer a{color:var(--muted)} footer a:hover{color:var(--accent)}
+  @media (max-width:480px){ body{padding:1rem .7rem 3rem} h1{font-size:1.3rem} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>Effects of changes in G — practice</h1>
+  <p class="sub">Intermediate Macroeconomics</p>
+</header>
+
+<div id="app"></div>
+
+<footer>
+  <a href="index.html">All practice quizzes</a> &middot;
+  Your progress is saved in this browser, on this device only. Nothing is sent
+  anywhere.
+</footer>
+
+</div>
+
+<script>
+/* ------------------------------------------------------------------ questions
+   Order follows the chapter: setup, preferences, budget line, optimum.
+   correct = index into options.                                              */
+const QUESTIONS = [
+ {stem:"In our benchmark model, the effect of an increase in government spending <em class='v'>G</em> on output <em class='v'>Y</em> can be analyzed in the labor market without choosing specific functions for preferences and technology. What does that analysis tell us?",
+  options:["The direction of the effects on hours and output, but not how large they are",
+           "How many hours and how much output change, in numbers",
+           "Nothing, because <em class='v'>G</em> does not enter the labor market",
+           "The effect on consumption only, because output does not change"],
+  correct:0,
+  why:"With general preferences and technology we can sign the effects. Saying by how much needs specific functions."},
+
+ {stem:"In our benchmark model the government pays for its spending <em class='v'>G</em> with taxes. Which agent is affected directly when <em class='v'>G</em> rises?",
+  options:["The firm, whose revenue curve falls",
+           "The consumer, who pays a higher lump-sum tax <em class='v'>T</em>",
+           "The firm, whose wage bill rises",
+           "No agent, because <em class='v'>G</em> is only an accounting item"],
+  correct:1,
+  why:"Higher <em class='v'>G</em> means higher <em class='v'>T</em>, and <em class='v'>T</em> enters the consumer's budget constraint. The firm's problem does not contain <em class='v'>G</em>."},
+
+ {stem:"In our benchmark model, a higher lump-sum tax <em class='v'>T</em> lowers the consumer's income. Both consumption and leisure are normal goods. What happens to the consumer's leisure &#8467; at a given wage?",
+  options:["It rises, because the tax makes leisure cheaper",
+           "It does not change, because the wage has not changed",
+           "It falls, because this is a negative income effect",
+           "It rises, because the tax is a substitution effect toward leisure"],
+  correct:2,
+  why:"A tax is lump-sum, so the wage and the price of leisure do not change: it is a pure income effect. With leisure normal, less income means less leisure."},
+
+ {stem:"In our benchmark model, the consumer works more at every wage after a rise in the lump-sum tax <em class='v'>T</em>. What happens to the labor supply curve <em class='v'>N</em><sup>s</sup>(<em class='v'>w</em>) in the (<em class='v'>N</em>, <em class='v'>w</em>) axes?",
+  options:["It shifts to the left",
+           "It becomes steeper but does not shift",
+           "It does not move: only the point on it changes",
+           "It shifts to the right"],
+  correct:3,
+  why:"At every wage hours worked are higher, so the whole curve shifts to the right. A change in the wage, by contrast, moves us along the curve."},
+
+ {stem:"In our benchmark model the government raises the lump-sum tax on consumers to pay for higher <em class='v'>G</em>. Why does the labor demand curve <em class='v'>N</em><sup>d</sup>(<em class='v'>w</em>) not shift?",
+  options:["Because the firm cannot observe that the government has raised <em class='v'>G</em>",
+           "Because labor demand never shifts in any version of the model",
+           "Because nothing in the firm's profit maximization changes",
+           "Because the higher tax lowers profit by exactly the extra wage bill paid"],
+  correct:2,
+  why:"The firm chooses <em class='v'>N</em> to maximize <em class='v'>z</em>F(<em class='v'>K</em>, <em class='v'>N</em>) &minus; <em class='v'>w</em><em class='v'>N</em>. Neither <em class='v'>z</em>, <em class='v'>K</em> nor <em class='v'>w</em> (taken as given) changes, so the choice at each wage is the same."},
+
+ {stem:"In our benchmark model, labor supply shifts to the right and labor demand does not shift. What happens to the equilibrium hours <em class='v'>N</em>* and the equilibrium wage <em class='v'>w</em>*?",
+  options:["Hours rise and the wage falls",
+           "Hours rise and the wage rises",
+           "Hours fall and the wage falls",
+           "Hours rise and the wage does not change"],
+  correct:0,
+  why:"Moving down along the downward-sloping labor demand curve, the wage falls and hours rise."},
+
+ {stem:"In our benchmark model, equilibrium hours <em class='v'>N</em>* rise and <em class='v'>z</em> and <em class='v'>K</em> do not change. What happens to equilibrium output <em class='v'>Y</em>* = <em class='v'>z</em>F(<em class='v'>K</em>, <em class='v'>N</em>*)?",
+  options:["It falls, because the wage has fallen",
+           "It rises, because more labor means more output",
+           "It does not change, because <em class='v'>z</em> and <em class='v'>K</em> are fixed",
+           "It cannot be signed, because <em class='v'>G</em> also rises"],
+  correct:1,
+  why:"Output depends only on <em class='v'>z</em>, <em class='v'>K</em> and <em class='v'>N</em>*. With more labor, <em class='v'>Y</em>* rises."},
+
+ {stem:"In our benchmark model, a rise in <em class='v'>G</em> raises both equilibrium output <em class='v'>Y</em>* and <em class='v'>G</em>. Why can the labor-market analysis not tell us what happens to <em class='v'>C</em>* = <em class='v'>Y</em>* &minus; <em class='v'>G</em>?",
+  options:["Because consumption is not determined in equilibrium",
+           "Because <em class='v'>C</em>* is equal to <em class='v'>G</em> in equilibrium, so it is fixed",
+           "Because <em class='v'>G</em> is determined outside the model",
+           "Because it does not show which rises by more"],
+  correct:3,
+  why:"<em class='v'>C</em>* is the difference between two quantities that both rise. The sign depends on which rises more, and the labor-market figures do not show that."},
+
+ {stem:"In our benchmark model, suppose the extra lump-sum tax were imposed on firms instead of consumers. What would the labor-market analysis of a rise in <em class='v'>G</em> look like?",
+  options:["Labor demand would shift to the left, because the firm's costs would rise",
+           "The same, because lower profit means lower dividends for consumers",
+           "Labor supply would not shift, because consumers would pay no tax at all",
+           "It could not be done, because firms cannot pay lump-sum taxes"],
+  correct:1,
+  why:"The firm's labor choice does not change, and the fall in profit reaches the consumer as lower dividends: the same negative income effect as a tax on the consumer."},
+
+ {stem:"In our benchmark model, why would a lump-sum tax on firms not change the firm's choice of labor?",
+  options:["Because firms are exempt from all taxes in the model",
+           "Because the consumers end up paying it in full",
+           "Because it changes neither slope of the revenue or cost curve",
+           "Because the firm chooses its labor before any tax is announced"],
+  correct:2,
+  why:"A lump-sum amount only moves profit up or down by the same amount at every <em class='v'>N</em>, so the <em class='v'>N</em> that maximizes profit is unchanged."},
+
+ {stem:"In our benchmark model, a rise in <em class='v'>G</em> is analyzed in the labor market and again on the one graph with the PPF. Which result do the two analyses share?",
+  options:["Hours worked and output both rise",
+           "Consumption falls and hours worked rise",
+           "Hours worked fall and output falls",
+           "Consumption rises and output rises"],
+  correct:0,
+  why:"Both analyses find <em class='v'>N</em>* and <em class='v'>Y</em>* higher. Only the one graph goes further and signs consumption, which falls."},
+
+ {stem:"In our benchmark model, the PPF is drawn with its right end at the point (<em class='v'>h</em>, &minus;<em class='v'>G</em>). What happens to this point when <em class='v'>G</em> rises?",
+  options:["It stays where it is, because there is no labor at &#8467; = <em class='v'>h</em>",
+           "It moves to the left along the horizontal axis",
+           "It moves up, because less is left for consumption",
+           "It moves down, because the PPF shifts down by the increase in <em class='v'>G</em>"],
+  correct:3,
+  why:"At &#8467; = <em class='v'>h</em> there is no labor and no output, so the PPF is at &minus;<em class='v'>G</em>. A higher <em class='v'>G</em> lowers it with the rest of the curve."},
+
+ {stem:"In our benchmark model, the PPF shifts down in a parallel way. Why does this create an income effect for the consumer, rather than a substitution effect?",
+  options:["Because the wage rises at every level of leisure, so work pays more",
+           "Because the PPF becomes steeper, so leisure becomes more costly to take",
+           "Because resources fall at every &#8467; and the slope there is unchanged",
+           "Because the indifference curves shift when the PPF moves"],
+  correct:2,
+  why:"A parallel shift changes how much the economy can produce at each &#8467; but not the marginal product of labor there, so it works like a fall in income at an unchanged price of leisure."},
+
+ {stem:"In our benchmark model, a downward parallel shift of the PPF is a negative income effect. Which assumption on preferences lets us conclude that both <em class='v'>C</em>* and &#8467;* fall?",
+  options:["More of each good is better than less",
+           "Both consumption and leisure are normal goods",
+           "The indifference curves are convex",
+           "Leisure is an inferior good"],
+  correct:1,
+  why:"Normal goods are those whose quantity falls when income falls. With both normal, the new equilibrium has less of each."},
+
+ {stem:"In our benchmark model, which result for private consumption <em class='v'>C</em>* follows from an increase in government spending <em class='v'>G</em>, according to the one-graph analysis?",
+  options:["It falls: <em class='v'>G</em> crowds out consumption",
+           "It rises, because output rises by more than <em class='v'>G</em> does",
+           "It does not change, because <em class='v'>G</em> is financed by taxes",
+           "It cannot be signed, as in the labor-market analysis"],
+  correct:0,
+  why:"The one graph gives a clear answer: <em class='v'>C</em>* and &#8467;* fall, so <em class='v'>N</em>* and <em class='v'>Y</em>* rise, but private consumption is crowded out."},
+
+ {stem:"In our benchmark model, which two conditions place the equilibrium on the one graph with the PPF?",
+  options:["Goods market clearing and a balanced government budget",
+           "MRS = <em class='v'>w</em> for the consumer and a balanced government budget",
+           "The consumer's budget constraint and the firm's profit maximization",
+           "Goods market clearing (on the PPF) and MRS = MP<sub><em class='v'>N</em></sub> (the tangency)"],
+  correct:3,
+  why:"The first condition is accounting and the second is where the economics is: both the consumer and the firm behave optimally at the equilibrium wage."},
+
+ {stem:"In our benchmark model, the one-graph analysis shows that after a rise in <em class='v'>G</em> leisure &#8467;* falls. How does it follow that output <em class='v'>Y</em>* rises?",
+  options:["The PPF shifts up, so the economy can produce more",
+           "Hours <em class='v'>N</em>* = <em class='v'>h</em> &minus; &#8467;* rise, and <em class='v'>z</em> and <em class='v'>K</em> are fixed",
+           "Consumption <em class='v'>C</em>* rises, and <em class='v'>Y</em>* = <em class='v'>C</em>* + <em class='v'>G</em> must rise",
+           "The wage rises, so firms want to produce more"],
+  correct:1,
+  why:"Less leisure means more hours, and the same technology produces more with more labor."},
+
+ {stem:"In the U.S. during World War II, government spending rose by a large amount for reasons unrelated to the U.S. economy. What happened to GDP and to consumption?",
+  options:["Both GDP and consumption rose strongly",
+           "GDP fell and consumption rose",
+           "GDP rose and consumption fell slightly",
+           "GDP rose and consumption rose even more than GDP"],
+  correct:2,
+  why:"This is what the model predicts for a rise in <em class='v'>G</em>: output rises and private consumption is crowded out."},
+
+ {stem:"Why is the rise in U.S. government spending during World War II useful for checking the predictions of our benchmark model about government spending?",
+  options:["Because the rise did not come from the economy, so it is a change in <em class='v'>G</em> alone",
+           "Because consumption did not change at all during the war",
+           "Because the war did not affect productivity <em class='v'>z</em> or hours worked",
+           "Because the government spending was financed without any taxes"],
+  correct:0,
+  why:"The model predicts the effect of a change in <em class='v'>G</em> by itself. A rise that has nothing to do with the rest of the economy comes close to that experiment."},
+
+ {stem:"What is the advantage of the one-graph approach over the labor-market analysis when we study an increase in government spending <em class='v'>G</em>?",
+  options:["It gives numerical answers without any specific functions",
+           "It does not rely on any assumption about preferences at all",
+           "It replaces the consumer's and the firm's problems with one",
+           "It links the shifts, so it can sign consumption too"],
+  correct:3,
+  why:"The labor-market analysis could sign hours and output but not consumption. On the one graph a single parallel shift gives all of them."}
+];
+
+/* ---------------------------------------------------------------- state */
+const LETTERS = ["a","b","c","d","e","f"];
+const app = document.getElementById("app");
+
+let learned, everWrong, queue, order, seen, firstTry, relearned, wrongHere, answered;
+
+/* Progress is kept in this browser only, under one key. A question counts as
+   mastered once it has been answered correctly at the first attempt of a
+   showing; missing it puts it back to "shaky" until that happens.            */
+const STORE_KEY = "ecn313-effects-of-changes-in-g-v1";
+let mastered;            // stored: answered right at the first attempt, persisted
+let touched;             // stored: has been seen at some point
+let sessionResult;       // this session only: qid -> true/false, not yet saved
+let savedThisVisit;      // has the student pressed Save during this visit
+
+function loadStore(){
+  try{
+    const raw = localStorage.getItem(STORE_KEY);
+    if(raw){
+      const o = JSON.parse(raw);
+      if(Array.isArray(o.mastered) && o.mastered.length === QUESTIONS.length
+         && Array.isArray(o.touched) && o.touched.length === QUESTIONS.length){
+        mastered = o.mastered.slice(); touched = o.touched.slice(); return true;
+      }
+    }
+  }catch(e){}
+  return false;
+}
+/* What the stored record would become if the student chooses to save. */
+function mergedMastered(){
+  return mastered.map((m,i)=> i in sessionResult ? sessionResult[i] : m);
+}
+function mergedTouched(){
+  return touched.map((t,i)=> (i in sessionResult) ? true : t);
+}
+function saveStore(){
+  mastered = mergedMastered();
+  touched  = mergedTouched();
+  try{
+    localStorage.setItem(STORE_KEY,
+      JSON.stringify({mastered, touched, saved:Date.now()}));
+    return true;
+  }catch(e){ return false; }
+}
+function clearStore(){
+  try{ localStorage.removeItem(STORE_KEY); }catch(e){}
+  mastered = new Array(QUESTIONS.length).fill(false);
+  touched  = new Array(QUESTIONS.length).fill(false);
+}
+function hasHistory(){ return touched.some(Boolean); }
+function notMastered(){ return QUESTIONS.map((_,i)=>i).filter(i=>!mastered[i]); }
+
+function resetAll(){
+  learned  = new Array(QUESTIONS.length).fill(false);
+  everWrong= new Array(QUESTIONS.length).fill(false);
+}
+
+function initStore(){
+  if(!loadStore()){
+    mastered = new Array(QUESTIONS.length).fill(false);
+    touched  = new Array(QUESTIONS.length).fill(false);
+  }
+}
+
+function startSession(pool){
+  queue = pool.slice();
+  seen = new Set(); firstTry = new Set(); relearned = new Set();
+  sessionResult = {}; savedThisVisit = false;
+  nextQuestion();
+}
+
+function nextQuestion(){
+  if(queue.length === 0){ renderEnd(true); return; }
+  wrongHere = 0; answered = false;
+  const qid = queue[0];
+  order = shuffled(QUESTIONS[qid].options.map((_,i)=>i));
+  renderQuestion(qid);
+}
+
+function shuffled(a){
+  const r = a.slice();
+  for(let i=r.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [r[i],r[j]]=[r[j],r[i]]; }
+  return r;
+}
+
+/* --------------------------------------------------------------- screens */
+function renderHome(){
+  const done = mastered.filter(Boolean).length;
+  const left = notMastered();
+
+  if(hasHistory()){
+    app.innerHTML = `
+      <div class="card">
+        <p class="qmeta">Saved progress found on this device</p>
+        <p class="stem">Last time you answered <b>${done}</b> of
+          ${QUESTIONS.length} questions correctly at the first attempt.
+          What would you like to practise?</p>
+        <div class="row">
+          ${left.length
+            ? `<button class="btn" id="go-left">Only the ${left.length} I have not learned</button>`
+            : ``}
+          <button class="btn ${left.length ? "ghost" : ""}" id="go-all">All ${QUESTIONS.length} questions</button>
+        </div>
+        <div class="row">
+          <button class="btn quiet" id="forget">Clear saved progress</button>
+        </div>
+        <p class="note" style="margin-top:.9rem">Progress is kept in this
+          browser, on this device only, and never leaves it.</p>
+      </div>`;
+    document.getElementById("go-all").onclick =
+      ()=>{ resetAll(); startSession(QUESTIONS.map((_,i)=>i)); };
+    const bl = document.getElementById("go-left");
+    if(bl) bl.onclick = ()=>{ resetAll(); startSession(left); };
+    document.getElementById("forget").onclick =
+      ()=>{ clearStore(); resetAll(); renderHome(); };
+    return;
+  }
+
+  app.innerHTML = `
+    <div class="card">
+      <p class="stem">Twenty questions on the effects of changes in G, in the order
+        the notes cover them. Get one right first time and it is done. Get it
+        wrong and you keep choosing until you find the answer &mdash; then that
+        question comes back later in the session.</p>
+      <p class="note">At the end you can save your progress on this device, so
+        that next time you can practise just the ones you have not learned.</p>
+      <div class="row">
+        <button class="btn" id="go-all">Start practice session</button>
+      </div>
+    </div>`;
+  document.getElementById("go-all").onclick =
+    ()=>{ resetAll(); startSession(QUESTIONS.map((_,i)=>i)); };
+}
+
+function renderQuestion(qid){
+  const q = QUESTIONS[qid];
+  const total = QUESTIONS.length;
+  const doneCount = learned.filter(Boolean).length;
+  app.innerHTML = `
+    <div class="bar"><div style="width:${(doneCount/total*100).toFixed(1)}%"></div></div>
+    <div class="card">
+      <p class="qmeta">Question ${qid+1} of ${total} &middot; ${queue.length} left this round</p>
+      <p class="stem">${q.stem}</p>
+      <ul class="options" id="opts">
+        ${order.map((oi,pos)=>`
+          <li><button class="opt" data-oi="${oi}">
+            <span class="tag">(${LETTERS[pos]})</span><span>${q.options[oi]}</span>
+          </button></li>`).join("")}
+      </ul>
+      <div id="verdict"></div>
+      <div class="row">
+        <div id="advance"></div>
+        <div class="spacer"></div>
+        <button class="btn quiet" id="end">End session</button>
+      </div>
+    </div>`;
+  document.querySelectorAll("#opts .opt").forEach(b=>{
+    b.onclick = ()=>choose(qid, parseInt(b.dataset.oi,10), b);
+  });
+  document.getElementById("end").onclick = ()=>renderEnd(false);
+}
+
+function choose(qid, oi, btn){
+  if(answered) return;
+  const q = QUESTIONS[qid];
+  const firstShowing = !seen.has(qid);
+  seen.add(qid);
+  touched[qid] = true;
+  const verdict = document.getElementById("verdict");
+
+  if(oi !== q.correct){
+    everWrong[qid] = true; wrongHere++;
+    sessionResult[qid] = false;
+    btn.classList.add("wrong"); btn.disabled = true;
+    const left = document.querySelectorAll("#opts .opt:not(:disabled)").length;
+    verdict.innerHTML = `<div class="verdict no"><b>Not quite.</b>
+      ${left > 1 ? "Try again — pick from what is left."
+                 : "One option left; it has to be that one."}</div>`;
+    return;
+  }
+
+  answered = true;
+  btn.classList.add("right");
+  document.querySelectorAll("#opts .opt").forEach(b=>b.disabled = true);
+
+  let head, tail;
+  if(wrongHere === 0){
+    queue.shift();
+    learned[qid] = true;
+    if(everWrong[qid]){ relearned.add(qid); head = "Right — and that one is learned."; }
+    else             { firstTry.add(qid);  head = "Correct, first time."; }
+    if(firstShowing && !everWrong[qid] && !(qid in sessionResult)){
+      sessionResult[qid] = true;
+    }
+    tail = "It will not come up again.";
+  }else{
+    queue.shift(); queue.push(qid);
+    head = "That's the one.";
+    tail = "This question will come back once the others have been through.";
+  }
+  verdict.innerHTML = `<div class="verdict ok"><b>${head}</b>${q.why}
+    <span class="note"><br>${tail}</span></div>`;
+  const adv = document.getElementById("advance");
+  adv.innerHTML = `<button class="btn" id="next">${queue.length ? "Next question" : "Finish"}</button>`;
+  document.getElementById("next").onclick = nextQuestion;
+}
+
+function renderEnd(cleared){
+  const attempted = seen.size;
+  const clean = firstTry.size;
+  const fixed = relearned.size;
+  const wouldBe = mergedMastered();
+  const wouldLeft = wouldBe.map((m,i)=>i).filter(i=>!wouldBe[i]);
+  const doneAfter = wouldBe.filter(Boolean).length;
+  const anythingToSave = Object.keys(sessionResult).length > 0;
+
+  app.innerHTML = `
+    <div class="card">
+      <p class="qmeta">${cleared ? "Round complete" : "Session ended"}</p>
+      <p class="stem">${cleared
+        ? "Everything in this round has been answered."
+        : "Here is how the session went."}</p>
+      <table class="stats">
+        <tr><td>Questions attempted</td><td class="n">${attempted}</td></tr>
+        <tr><td>Answered correctly at the first attempt</td><td class="n">${clean}</td></tr>
+        <tr><td>Learned after getting it wrong first</td><td class="n">${fixed}</td></tr>
+      </table>
+
+      <div id="savebox">
+      ${anythingToSave ? `
+        <div class="verdict ok" style="margin-top:1rem">
+          <b>Save your progress?</b>
+          Saving records which questions you answered correctly at the first
+          attempt, so that next time you can practise only the rest. It is kept
+          <b>in this browser, on this device only</b> &mdash; nothing is sent
+          anywhere.
+        </div>
+        <div class="row">
+          <button class="btn" id="save">Save on this device</button>
+          <button class="btn quiet" id="nosave">Don't save</button>
+        </div>` : ``}
+      </div>
+
+      <div class="row" id="nextsteps">
+        <button class="btn ghost" id="again">Practise the ${wouldLeft.length} not yet learned</button>
+        <button class="btn ghost" id="all">Practise all ${QUESTIONS.length}</button>
+        <button class="btn quiet" id="home">Back to start</button>
+      </div>
+    </div>`;
+
+  const box = document.getElementById("savebox");
+  const bs = document.getElementById("save");
+  if(bs) bs.onclick = ()=>{
+    const ok = saveStore();
+    savedThisVisit = true;
+    box.innerHTML = ok
+      ? `<div class="verdict ok" style="margin-top:1rem"><b>Saved on this device.</b>
+         ${doneAfter} of ${QUESTIONS.length} questions are recorded as learned.
+         Next time you open this page you can pick up where you left off.</div>`
+      : `<div class="verdict no" style="margin-top:1rem"><b>Could not save.</b>
+         Your browser is blocking storage — private browsing usually does this.</div>`;
+  };
+  const bn = document.getElementById("nosave");
+  if(bn) bn.onclick = ()=>{
+    box.innerHTML = `<p class="note" style="margin-top:1rem">Nothing saved.
+      Closing the page will clear this session.</p>`;
+  };
+
+  const againBtn = document.getElementById("again");
+  if(wouldLeft.length === 0){ againBtn.remove(); }
+  else againBtn.onclick = ()=>{ resetAll(); startSession(wouldLeft); };
+  document.getElementById("all").onclick =
+    ()=>{ resetAll(); startSession(QUESTIONS.map((_,i)=>i)); };
+  document.getElementById("home").onclick = renderHome;
+}
+
+initStore();
+resetAll();
+renderHome();
+</script>
+</body>
+</html>
