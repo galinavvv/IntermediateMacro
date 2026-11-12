@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Intermediate Macroeconomics — Social planner and efficiency practice</title>
+<style>
+  :root{
+    --ink:#1A1A1C; --accent:#1F3A6E; --budget:#15607A; --ic:#B21F35;
+    --note:#8A6212; --muted:#6B6E76; --rule:#D8DCE3; --paper:#FDFCFA;
+    --panel:#FFFFFF;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--paper); color:var(--ink);
+    font-family:"Palatino Linotype",Palatino,"Book Antiqua","URW Palladio L",
+                Georgia,serif;
+    line-height:1.5; padding:1.5rem 1rem 4rem;
+  }
+  .wrap{max-width:46rem;margin:0 auto}
+  header{border-top:3px solid var(--accent);padding-top:.9rem;margin-bottom:1.6rem}
+  h1{font-size:1.5rem;margin:0 0 .2rem;color:var(--accent);letter-spacing:.01em}
+  .sub{color:var(--muted);font-style:italic;font-size:.95rem;margin:0}
+  .card{
+    background:var(--panel);border:1px solid var(--rule);border-left:4px solid var(--accent);
+    padding:1.2rem 1.3rem;margin-bottom:1.1rem;
+  }
+  .stem{font-size:1.06rem;margin:0 0 1rem}
+  .qmeta{color:var(--muted);font-size:.82rem;letter-spacing:.04em;
+         text-transform:uppercase;margin:0 0 .5rem}
+  ul.options{list-style:none;margin:0;padding:0}
+  ul.options li{margin:0 0 .5rem}
+  button.opt{
+    width:100%;text-align:left;font:inherit;font-size:1rem;
+    background:#fff;border:1px solid var(--rule);border-radius:2px;
+    padding:.62rem .8rem;cursor:pointer;color:var(--ink);
+    display:flex;gap:.6rem;align-items:baseline;
+  }
+  button.opt:hover:not(:disabled){border-color:var(--budget);background:#F4F9FB}
+  button.opt:disabled{cursor:default}
+  button.opt .tag{color:var(--muted);font-variant:small-caps;min-width:1.2rem}
+  button.opt.wrong{background:#FBF1F2;border-color:var(--ic);color:#8B4148;
+                   text-decoration:line-through;text-decoration-thickness:1px}
+  button.opt.right{background:#EFF6F8;border-color:var(--budget);color:var(--budget);
+                   font-weight:600}
+  .verdict{margin:1rem 0 0;padding:.7rem .85rem;font-size:.97rem;border-left:3px solid}
+  .verdict.ok{border-color:var(--budget);background:#EFF6F8}
+  .verdict.no{border-color:var(--ic);background:#FBF1F2}
+  .verdict b{display:block;margin-bottom:.15rem}
+  .btn{
+    font:inherit;font-size:1rem;padding:.62rem 1.15rem;border-radius:2px;
+    border:1px solid var(--accent);background:var(--accent);color:#fff;cursor:pointer;
+  }
+  .btn:hover{background:#162C55}
+  .btn.ghost{background:#fff;color:var(--accent)}
+  .btn.ghost:hover{background:#F2F5FA}
+  .btn.quiet{background:#fff;color:var(--muted);border-color:var(--rule)}
+  .btn.quiet:hover{background:#F6F6F4;color:var(--ink)}
+  .row{display:flex;gap:.6rem;flex-wrap:wrap;align-items:center;margin-top:1.1rem}
+  .spacer{flex:1}
+  .bar{height:4px;background:var(--rule);margin:.3rem 0 1.4rem;overflow:hidden}
+  .bar > div{height:100%;background:var(--budget);width:0;transition:width .25s}
+  table.stats{border-collapse:collapse;width:100%;margin:.4rem 0 .2rem}
+  table.stats td{padding:.42rem .2rem;border-bottom:1px solid var(--rule);font-size:1rem}
+  table.stats td.n{text-align:right;font-weight:700;color:var(--accent);width:3.5rem}
+  table.stats tr:last-child td{border-bottom:none}
+  .note{color:var(--muted);font-size:.9rem}
+  em.v{font-style:italic}
+  footer{margin-top:2.2rem;color:var(--muted);font-size:.82rem;
+         border-top:1px solid var(--rule);padding-top:.7rem}
+  footer a{color:var(--muted)} footer a:hover{color:var(--accent)}
+  @media (max-width:480px){ body{padding:1rem .7rem 3rem} h1{font-size:1.3rem} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>Social planner and efficiency — practice</h1>
+  <p class="sub">Intermediate Macroeconomics</p>
+</header>
+
+<div id="app"></div>
+
+<footer>
+  <a href="index.html">All practice quizzes</a> &middot;
+  Your progress is saved in this browser, on this device only. Nothing is sent
+  anywhere.
+</footer>
+
+</div>
+
+<script>
+/* ------------------------------------------------------------------ questions
+   Order follows the chapter: setup, preferences, budget line, optimum.
+   correct = index into options.                                              */
+const QUESTIONS = [
+ {stem:"In the graph with leisure &#8467; on the horizontal axis and consumption <em class='v'>c</em> on the vertical axis, the PPF ends at the point where all of the time endowment <em class='v'>h</em> is leisure. What is its height there?",
+  options:["Zero, because with no labor there is no output and nothing is bought",
+           "&minus;<em class='v'>G</em>, because there is no output but the government still has to buy <em class='v'>G</em>",
+           "<em class='v'>G</em>, because the government's purchases add to what is available",
+           "<em class='v'>zF</em>(<em class='v'>K</em>, <em class='v'>h</em>), because capital produces output without labor"],
+  correct:1,
+  why:"With no hours worked there is no output, so consumption is &minus;<em class='v'>G</em>: nothing is produced and the government's purchases still have to be paid for. That is why the PPF ends below the horizontal axis whenever <em class='v'>G</em> &gt; 0."},
+
+ {stem:"On the graph with leisure on the horizontal axis and consumption on the vertical axis, what is the slope of the PPF at a point, in absolute value?",
+  options:["The marginal product of labor at that level of hours worked",
+           "The wage that the firm pays at that level of hours worked",
+           "The marginal rate of substitution between leisure and consumption",
+           "The after-tax wage that the consumer receives for an hour of work"],
+  correct:0,
+  why:"The PPF is the revenue curve mirrored and shifted, so each extra hour of leisure costs the economy the marginal product of labor in consumption. That is its slope in absolute value, whether or not the economy is in equilibrium."},
+
+ {stem:"The Social Planner solves a decision problem. What does she choose, and what is her only constraint?",
+  options:["The bundle with the highest output, subject to the consumers' budget constraint",
+           "The bundle with the highest profit, subject to the market wage",
+           "The bundle with the highest consumption, subject to the government's budget",
+           "The bundle with the highest consumers' utility, subject to what is feasible (the PPF)"],
+  correct:3,
+  why:"The planner maximizes the consumers' utility and is limited only by what the economy can produce, which is the PPF. There are no prices, wages or taxes in her problem."},
+
+ {stem:"Which list describes the Social Planner?",
+  options:["Benevolent, with the power to tax but only partial information about the technology",
+           "Self-interested, with full power to allocate resources and full information about the technology",
+           "Benevolent, with full power to allocate resources and full information about the technology",
+           "Benevolent, taking the wage as given and choosing hours the way a firm would"],
+  correct:2,
+  why:"The planner is a hypothetical agent with three features: she maximizes the consumers' utility, she can allocate resources as she wishes, and she knows the technology. Take any one of them away and she is no longer the benchmark."},
+
+ {stem:"The government pays for its spending with some tax system. Why does the Social Planner's choice not depend on which one?",
+  options:["She ignores the consumers' preferences, so taxes cannot change her choice",
+           "She is constrained only by what is feasible, and taxes do not appear in that constraint",
+           "She always uses lump-sum taxes, so there is nothing to compare",
+           "She sets the tax rate so that the consumers' budget line is the PPF"],
+  correct:1,
+  why:"The planner's problem is to pick the best bundle on the PPF. Taxes are about how the equilibrium finances the spending, and they do not change what the economy can produce, so they do not enter her problem."},
+
+ {stem:"Which statement about the Social Planner is correct?",
+  options:["She is a hypothetical agent used as a benchmark for the most efficient allocation",
+           "She is the government in our model, choosing taxes to maximize utility",
+           "She is the firm in our model, choosing hours to maximize profit",
+           "She is the consumer in our model, choosing consumption and leisure"],
+  correct:0,
+  why:"The planner exists neither in reality nor in our model. She is a thought device: what would the best feasible allocation look like?"},
+
+ {stem:"Why are the governments of centrally planned economies not Social Planners?",
+  options:["They are benevolent and fully informed, but they have no power to allocate resources",
+           "They have full information and full power, but they are not benevolent",
+           "They maximize the consumers' utility, but they face a different PPF from the economy",
+           "They act in their own interest, cannot control resources fully, and lack information"],
+  correct:3,
+  why:"A planner is benevolent, has full power and has full information. Real governments fail on all three: they typically act in their own interest, effort is unobservable and black markets reallocate goods, and the technology frontier is hard to see."},
+
+ {stem:"What does it mean to say that an equilibrium is efficient?",
+  options:["It maximizes total output, whatever happens to the consumers' utility",
+           "It gives every consumer equal consumption and equal leisure at all times",
+           "It coincides with the Social Planner's choice (Pareto optimal, first best)",
+           "It has no government spending, and therefore needs no taxes at all"],
+  correct:2,
+  why:"Efficient, Pareto optimal and first best all mean the same thing here: the equilibrium is what the Social Planner would have chosen."},
+
+ {stem:"In our benchmark model the government pays for its spending with a lump-sum tax. How does the competitive equilibrium compare with the Social Planner's choice?",
+  options:["They differ: the equilibrium has too little employment",
+           "They coincide, though consumers and firms act selfishly",
+           "They differ: the equilibrium has too much consumption",
+           "They coincide only when government spending is zero"],
+  correct:1,
+  why:"With a lump-sum tax the equilibrium is on the PPF and the indifference curve is tangent to it, which is the planner's choice. Selfish behavior, a market wage and a lump-sum tax are enough to reach the efficient allocation."},
+
+ {stem:"Why do economists often describe what the Social Planner would do, even though she does not exist?",
+  options:["Her allocation is a benchmark that shows how well the economy could do",
+           "Her allocation predicts which policies real governments will choose",
+           "Her allocation is the competitive equilibrium of every economy",
+           "Her allocation tells us which wage firms will pay in any economy"],
+  correct:0,
+  why:"A benchmark lets us ask whether an equilibrium falls short of the best feasible outcome, and by how much. That is a different job from predicting what governments do."},
+
+ {stem:"A firm cannot tell healthy customers from sick ones when it offers insurance, so it sets one price that reflects the average customer. Healthy customers find it too high and leave. Which kind of information problem is this?",
+  options:["Moral hazard: an action is hidden after the deal",
+           "Market power: the firm sets the price instead of taking it",
+           "An externality: the deal affects people outside it",
+           "Adverse selection: a characteristic is hidden before the deal"],
+  correct:3,
+  why:"With adverse selection one side knows something relevant about itself before the contract is signed. The price reflects the average customer, the best customers leave, and the market shrinks even though trades would have benefited both sides."},
+
+ {stem:"When a government pays for its spending with a proportional tax on labor income instead of a lump-sum tax, the consumer's budget line has slope (1 &minus; t)w while the firm's marginal product of labor equals w. What follows for the equilibrium?",
+  options:["The consumer's MRS is above the marginal product of labor",
+           "The consumer's MRS equals the marginal product of labor",
+           "The consumer's MRS is below the marginal product of labor",
+           "The consumer's MRS and the marginal product of labor cannot be compared"],
+  correct:2,
+  why:"The consumer is tangent to a budget line with slope (1 &minus; <em class='v'>t</em>)<em class='v'>w</em> and the firm hires until <em class='v'>MP</em><sub><em class='v'>N</em></sub> = <em class='v'>w</em>. Since (1 &minus; <em class='v'>t</em>)<em class='v'>w</em> &lt; <em class='v'>w</em>, MRS &lt; <em class='v'>MP</em><sub><em class='v'>N</em></sub>."},
+
+ {stem:"With a proportional tax on labor income, why is the equilibrium still on the PPF?",
+  options:["The consumer maximizes utility, so the choice has to be feasible",
+           "The goods market clears, so consumption plus government spending equals output",
+           "The firm maximizes profit, so it produces on the frontier",
+           "The tax rate is chosen so that the budget line coincides with the PPF"],
+  correct:1,
+  why:"Being on the PPF is an accounting condition: it comes from goods market clearing, whatever taxes are in place. Where on the PPF the equilibrium is depends on how agents behave."},
+
+ {stem:"In the equilibrium with a proportional tax on labor income, where is the equilibrium relative to the Social Planner's choice?",
+  options:["On the PPF, with more leisure and less consumption",
+           "On the PPF, with less leisure and more consumption",
+           "Above the PPF, with more leisure and more consumption",
+           "Below the PPF, with unchanged leisure and less consumption"],
+  correct:0,
+  why:"At the equilibrium the indifference curve is flatter than the PPF, which happens on the part of the PPF to the right of the tangency. Moving right along the PPF means more leisure and less consumption."},
+
+ {stem:"In the equilibrium with a proportional tax on labor income, compared with the Social Planner's choice, which of these is there too little of?",
+  options:["Consumption and output, but too much employment",
+           "Employment and leisure, but not consumption",
+           "Output and leisure, but too much consumption",
+           "Consumption, output and employment"],
+  correct:3,
+  why:"The equilibrium is lower on the PPF, so consumption and output are lower, and it has more leisure, so hours worked are lower. All three fall short of the planner's choice."},
+
+ {stem:"In the equilibrium with a proportional tax on labor income, how does the consumer compare with the consumer under the Social Planner's choice?",
+  options:["Better off, on a higher indifference curve",
+           "Equally well off, because taxes do not affect utility",
+           "Worse off, on a lower indifference curve",
+           "Better off, because the tax pays for government spending"],
+  correct:2,
+  why:"The planner's choice is the best bundle on the PPF. The equilibrium is another bundle on the PPF, so it is strictly worse for the consumer."},
+
+ {stem:"What does it mean that a proportional tax on labor income distorts decisions?",
+  options:["It makes the firm hire more hours than the consumer wants to supply",
+           "It puts a wedge between the consumer's pay and the firm's cost of an hour",
+           "It moves the PPF down, so the economy can produce less than before",
+           "It makes the consumer's indifference curves cross each other"],
+  correct:1,
+  why:"The consumer gets the after-tax wage while the firm pays the before-tax wage, so the trade-off the consumer faces differs from the one the technology offers. The equilibrium ends up away from the tangency."},
+
+ {stem:"Earlier, the effect of replacing a lump-sum tax with a proportional tax was studied in the consumer's decision problem, assuming that the wage and profit did not change. What does the equilibrium analysis add?",
+  options:["The result survives once the wage and profit are allowed to adjust",
+           "The result reverses once the wage and profit are allowed to adjust",
+           "The wage and profit turn out not to change in equilibrium",
+           "The result now depends on how large government spending is"],
+  correct:0,
+  why:"In equilibrium the wage and profit do adjust. Even after accounting for those changes the proportional tax is inefficient."},
+
+ {stem:"A firm is large enough to move the wage, instead of taking it as given. Compared with a firm that takes the wage as given, what happens?",
+  options:["It hires more hours, so the marginal product of labor ends up below the wage",
+           "It hires exactly as many hours, so the marginal product of labor equals the wage",
+           "It hires fewer hours, so the marginal product of labor ends up below the wage",
+           "It hires fewer hours, so the marginal product of labor ends up above the wage"],
+  correct:3,
+  why:"A firm that can move the wage holds hours down to keep the wage low. Then an extra hour is worth more in production than it costs in wages, so the marginal product of labor is above the wage."},
+
+ {stem:"A firm cannot observe how hard a worker works once she is hired, and pays a fixed wage. Which kind of information problem is this?",
+  options:["Adverse selection: a characteristic is hidden before the deal",
+           "Market power: the firm sets the wage instead of taking it",
+           "Moral hazard: an action is hidden after the deal",
+           "An externality: the deal affects people outside it"],
+  correct:2,
+  why:"With moral hazard the action cannot be observed once the deal is made, so a fixed wage gives too little reason to put in effort and output falls short of what is feasible when effort is observed."}
+];
+
+/* ---------------------------------------------------------------- state */
+const LETTERS = ["a","b","c","d","e","f"];
+const app = document.getElementById("app");
+
+let learned, everWrong, queue, order, seen, firstTry, relearned, wrongHere, answered;
+
+/* Progress is kept in this browser only, under one key. A question counts as
+   mastered once it has been answered correctly at the first attempt of a
+   showing; missing it puts it back to "shaky" until that happens.            */
+const STORE_KEY = "ecn313-social-planner-efficiency-v1";
+let mastered;            // stored: answered right at the first attempt, persisted
+let touched;             // stored: has been seen at some point
+let sessionResult;       // this session only: qid -> true/false, not yet saved
+let savedThisVisit;      // has the student pressed Save during this visit
+
+function loadStore(){
+  try{
+    const raw = localStorage.getItem(STORE_KEY);
+    if(raw){
+      const o = JSON.parse(raw);
+      if(Array.isArray(o.mastered) && o.mastered.length === QUESTIONS.length
+         && Array.isArray(o.touched) && o.touched.length === QUESTIONS.length){
+        mastered = o.mastered.slice(); touched = o.touched.slice(); return true;
+      }
+    }
+  }catch(e){}
+  return false;
+}
+/* What the stored record would become if the student chooses to save. */
+function mergedMastered(){
+  return mastered.map((m,i)=> i in sessionResult ? sessionResult[i] : m);
+}
+function mergedTouched(){
+  return touched.map((t,i)=> (i in sessionResult) ? true : t);
+}
+function saveStore(){
+  mastered = mergedMastered();
+  touched  = mergedTouched();
+  try{
+    localStorage.setItem(STORE_KEY,
+      JSON.stringify({mastered, touched, saved:Date.now()}));
+    return true;
+  }catch(e){ return false; }
+}
+function clearStore(){
+  try{ localStorage.removeItem(STORE_KEY); }catch(e){}
+  mastered = new Array(QUESTIONS.length).fill(false);
+  touched  = new Array(QUESTIONS.length).fill(false);
+}
+function hasHistory(){ return touched.some(Boolean); }
+function notMastered(){ return QUESTIONS.map((_,i)=>i).filter(i=>!mastered[i]); }
+
+function resetAll(){
+  learned  = new Array(QUESTIONS.length).fill(false);
+  everWrong= new Array(QUESTIONS.length).fill(false);
+}
+
+function initStore(){
+  if(!loadStore()){
+    mastered = new Array(QUESTIONS.length).fill(false);
+    touched  = new Array(QUESTIONS.length).fill(false);
+  }
+}
+
+function startSession(pool){
+  queue = pool.slice();
+  seen = new Set(); firstTry = new Set(); relearned = new Set();
+  sessionResult = {}; savedThisVisit = false;
+  nextQuestion();
+}
+
+function nextQuestion(){
+  if(queue.length === 0){ renderEnd(true); return; }
+  wrongHere = 0; answered = false;
+  const qid = queue[0];
+  order = shuffled(QUESTIONS[qid].options.map((_,i)=>i));
+  renderQuestion(qid);
+}
+
+function shuffled(a){
+  const r = a.slice();
+  for(let i=r.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [r[i],r[j]]=[r[j],r[i]]; }
+  return r;
+}
+
+/* --------------------------------------------------------------- screens */
+function renderHome(){
+  const done = mastered.filter(Boolean).length;
+  const left = notMastered();
+
+  if(hasHistory()){
+    app.innerHTML = `
+      <div class="card">
+        <p class="qmeta">Saved progress found on this device</p>
+        <p class="stem">Last time you answered <b>${done}</b> of
+          ${QUESTIONS.length} questions correctly at the first attempt.
+          What would you like to practise?</p>
+        <div class="row">
+          ${left.length
+            ? `<button class="btn" id="go-left">Only the ${left.length} I have not learned</button>`
+            : ``}
+          <button class="btn ${left.length ? "ghost" : ""}" id="go-all">All ${QUESTIONS.length} questions</button>
+        </div>
+        <div class="row">
+          <button class="btn quiet" id="forget">Clear saved progress</button>
+        </div>
+        <p class="note" style="margin-top:.9rem">Progress is kept in this
+          browser, on this device only, and never leaves it.</p>
+      </div>`;
+    document.getElementById("go-all").onclick =
+      ()=>{ resetAll(); startSession(QUESTIONS.map((_,i)=>i)); };
+    const bl = document.getElementById("go-left");
+    if(bl) bl.onclick = ()=>{ resetAll(); startSession(left); };
+    document.getElementById("forget").onclick =
+      ()=>{ clearStore(); resetAll(); renderHome(); };
+    return;
+  }
+
+  app.innerHTML = `
+    <div class="card">
+      <p class="stem">Twenty questions on the Social Planner and efficiency, in the order
+        the notes cover them. Get one right first time and it is done. Get it
+        wrong and you keep choosing until you find the answer &mdash; then that
+        question comes back later in the session.</p>
+      <p class="note">At the end you can save your progress on this device, so
+        that next time you can practise just the ones you have not learned.</p>
+      <div class="row">
+        <button class="btn" id="go-all">Start practice session</button>
+      </div>
+    </div>`;
+  document.getElementById("go-all").onclick =
+    ()=>{ resetAll(); startSession(QUESTIONS.map((_,i)=>i)); };
+}
+
+function renderQuestion(qid){
+  const q = QUESTIONS[qid];
+  const total = QUESTIONS.length;
+  const doneCount = learned.filter(Boolean).length;
+  app.innerHTML = `
+    <div class="bar"><div style="width:${(doneCount/total*100).toFixed(1)}%"></div></div>
+    <div class="card">
+      <p class="qmeta">Question ${qid+1} of ${total} &middot; ${queue.length} left this round</p>
+      <p class="stem">${q.stem}</p>
+      <ul class="options" id="opts">
+        ${order.map((oi,pos)=>`
+          <li><button class="opt" data-oi="${oi}">
+            <span class="tag">(${LETTERS[pos]})</span><span>${q.options[oi]}</span>
+          </button></li>`).join("")}
+      </ul>
+      <div id="verdict"></div>
+      <div class="row">
+        <div id="advance"></div>
+        <div class="spacer"></div>
+        <button class="btn quiet" id="end">End session</button>
+      </div>
+    </div>`;
+  document.querySelectorAll("#opts .opt").forEach(b=>{
+    b.onclick = ()=>choose(qid, parseInt(b.dataset.oi,10), b);
+  });
+  document.getElementById("end").onclick = ()=>renderEnd(false);
+}
+
+function choose(qid, oi, btn){
+  if(answered) return;
+  const q = QUESTIONS[qid];
+  const firstShowing = !seen.has(qid);
+  seen.add(qid);
+  touched[qid] = true;
+  const verdict = document.getElementById("verdict");
+
+  if(oi !== q.correct){
+    everWrong[qid] = true; wrongHere++;
+    sessionResult[qid] = false;
+    btn.classList.add("wrong"); btn.disabled = true;
+    const left = document.querySelectorAll("#opts .opt:not(:disabled)").length;
+    verdict.innerHTML = `<div class="verdict no"><b>Not quite.</b>
+      ${left > 1 ? "Try again — pick from what is left."
+                 : "One option left; it has to be that one."}</div>`;
+    return;
+  }
+
+  answered = true;
+  btn.classList.add("right");
+  document.querySelectorAll("#opts .opt").forEach(b=>b.disabled = true);
+
+  let head, tail;
+  if(wrongHere === 0){
+    queue.shift();
+    learned[qid] = true;
+    if(everWrong[qid]){ relearned.add(qid); head = "Right — and that one is learned."; }
+    else             { firstTry.add(qid);  head = "Correct, first time."; }
+    if(firstShowing && !everWrong[qid] && !(qid in sessionResult)){
+      sessionResult[qid] = true;
+    }
+    tail = "It will not come up again.";
+  }else{
+    queue.shift(); queue.push(qid);
+    head = "That's the one.";
+    tail = "This question will come back once the others have been through.";
+  }
+  verdict.innerHTML = `<div class="verdict ok"><b>${head}</b>${q.why}
+    <span class="note"><br>${tail}</span></div>`;
+  const adv = document.getElementById("advance");
+  adv.innerHTML = `<button class="btn" id="next">${queue.length ? "Next question" : "Finish"}</button>`;
+  document.getElementById("next").onclick = nextQuestion;
+}
+
+function renderEnd(cleared){
+  const attempted = seen.size;
+  const clean = firstTry.size;
+  const fixed = relearned.size;
+  const wouldBe = mergedMastered();
+  const wouldLeft = wouldBe.map((m,i)=>i).filter(i=>!wouldBe[i]);
+  const doneAfter = wouldBe.filter(Boolean).length;
+  const anythingToSave = Object.keys(sessionResult).length > 0;
+
+  app.innerHTML = `
+    <div class="card">
+      <p class="qmeta">${cleared ? "Round complete" : "Session ended"}</p>
+      <p class="stem">${cleared
+        ? "Everything in this round has been answered."
+        : "Here is how the session went."}</p>
+      <table class="stats">
+        <tr><td>Questions attempted</td><td class="n">${attempted}</td></tr>
+        <tr><td>Answered correctly at the first attempt</td><td class="n">${clean}</td></tr>
+        <tr><td>Learned after getting it wrong first</td><td class="n">${fixed}</td></tr>
+      </table>
+
+      <div id="savebox">
+      ${anythingToSave ? `
+        <div class="verdict ok" style="margin-top:1rem">
+          <b>Save your progress?</b>
+          Saving records which questions you answered correctly at the first
+          attempt, so that next time you can practise only the rest. It is kept
+          <b>in this browser, on this device only</b> &mdash; nothing is sent
+          anywhere.
+        </div>
+        <div class="row">
+          <button class="btn" id="save">Save on this device</button>
+          <button class="btn quiet" id="nosave">Don't save</button>
+        </div>` : ``}
+      </div>
+
+      <div class="row" id="nextsteps">
+        <button class="btn ghost" id="again">Practise the ${wouldLeft.length} not yet learned</button>
+        <button class="btn ghost" id="all">Practise all ${QUESTIONS.length}</button>
+        <button class="btn quiet" id="home">Back to start</button>
+      </div>
+    </div>`;
+
+  const box = document.getElementById("savebox");
+  const bs = document.getElementById("save");
+  if(bs) bs.onclick = ()=>{
+    const ok = saveStore();
+    savedThisVisit = true;
+    box.innerHTML = ok
+      ? `<div class="verdict ok" style="margin-top:1rem"><b>Saved on this device.</b>
+         ${doneAfter} of ${QUESTIONS.length} questions are recorded as learned.
+         Next time you open this page you can pick up where you left off.</div>`
+      : `<div class="verdict no" style="margin-top:1rem"><b>Could not save.</b>
+         Your browser is blocking storage — private browsing usually does this.</div>`;
+  };
+  const bn = document.getElementById("nosave");
+  if(bn) bn.onclick = ()=>{
+    box.innerHTML = `<p class="note" style="margin-top:1rem">Nothing saved.
+      Closing the page will clear this session.</p>`;
+  };
+
+  const againBtn = document.getElementById("again");
+  if(wouldLeft.length === 0){ againBtn.remove(); }
+  else againBtn.onclick = ()=>{ resetAll(); startSession(wouldLeft); };
+  document.getElementById("all").onclick =
+    ()=>{ resetAll(); startSession(QUESTIONS.map((_,i)=>i)); };
+  document.getElementById("home").onclick = renderHome;
+}
+
+initStore();
+resetAll();
+renderHome();
+</script>
+</body>
+</html>
